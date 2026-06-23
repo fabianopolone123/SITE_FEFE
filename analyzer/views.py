@@ -173,6 +173,13 @@ def _get_evolution(bimester: str, current_data: dict, current_metrics: dict | No
 
     diff_mean = round(curr_mean - prev_mean, 1)
     variacao_str = ('+' if diff_mean > 0 else '') + _fmt(diff_mean)
+
+    if prev_mean != 0:
+        pct_change = round((curr_mean - prev_mean) / prev_mean * 100, 1)
+    else:
+        pct_change = 0.0
+    pct_str = ('+' if pct_change > 0 else '') + _fmt(pct_change) + '%'
+
     if diff_mean >= 0.5:
         dominant = 'cres'
     elif diff_mean <= -0.5:
@@ -181,9 +188,9 @@ def _get_evolution(bimester: str, current_data: dict, current_metrics: dict | No
         dominant = 'estab'
 
     return {
-        'cres':     variacao_str if dominant == 'cres'  else '–',
-        'estab':    variacao_str if dominant == 'estab' else '–',
-        'queda':    variacao_str if dominant == 'queda' else '–',
+        'cres':     pct_str if dominant == 'cres'  else '–',
+        'estab':    pct_str if dominant == 'estab' else '–',
+        'queda':    pct_str if dominant == 'queda' else '–',
         'variacao': variacao_str,
         'dominant': dominant,
     }
