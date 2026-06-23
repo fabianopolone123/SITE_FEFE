@@ -541,6 +541,7 @@ def _build_html_report(data, metrics, teacher_name='', evolution=None):
   if (!toolbar) return;
   var btn = document.createElement('a');
   btn.href = '{index_url}';
+  btn.target = '_top';
   btn.textContent = '← Menu inicial';
   btn.style.cssText = 'background:#fff;color:#1a3a5c;border:1px solid #1a3a5c;border-radius:8px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px #0002;text-decoration:none;font-size:14px;display:inline-flex;align-items:center;';
   toolbar.insertBefore(btn, toolbar.firstChild);
