@@ -181,9 +181,9 @@ def _get_evolution(bimester: str, current_data: dict, current_metrics: dict | No
         dominant = 'estab'
 
     return {
-        'cres':     '100' if dominant == 'cres' else '-',
-        'estab':    '100' if dominant == 'estab' else '-',
-        'queda':    '100' if dominant == 'queda' else '-',
+        'cres':     variacao_str if dominant == 'cres'  else '–',
+        'estab':    variacao_str if dominant == 'estab' else '–',
+        'queda':    variacao_str if dominant == 'queda' else '–',
         'variacao': variacao_str,
         'dominant': dominant,
     }
