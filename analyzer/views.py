@@ -18,6 +18,7 @@ from .parser import parse_pdf
 from .calculator import calculate
 from .pdf_generator import generate_pdf
 from .models import ProcessedReport, StudentGrade, StudentSnapshot, SubjectSnapshot
+from .parser import extract_pdf_text, parse_from_text
 
 BIMESTER_CHOICES = [
     ('auto', 'Detectar automaticamente'),
@@ -196,26 +197,27 @@ def _get_evolution(bimester: str, current_data: dict, current_metrics: dict | No
     }
 
 
-def _rewind_pdf(pdf_file):
+def _extract_pdf_text(pdf_file) -> str:
+    """Lê e extrai o texto do PDF uma única vez."""
     try:
         pdf_file.seek(0)
     except (AttributeError, OSError):
         pass
+    return extract_pdf_text(pdf_file)
 
 
-def _parse_pdf_period(pdf_file, bimester):
-    _rewind_pdf(pdf_file)
-    return parse_pdf(pdf_file, bimester)
+def _parse_pdf_period(pdf_text: str, bimester: str) -> dict:
+    return parse_from_text(pdf_text, bimester)
 
 
-def _collect_periods_to_save(pdf_file, selected_bimester, active_data):
+def _collect_periods_to_save(pdf_text: str, selected_bimester: str, active_data: dict) -> list:
     if selected_bimester not in ('auto', '', None):
         return [active_data]
 
     periods = {}
     for period in ('1', '2', '3', '4'):
         try:
-            data = _parse_pdf_period(pdf_file, period)
+            data = parse_from_text(pdf_text, period)
             periods[data['bimester']] = data
         except ValueError:
             continue
@@ -625,8 +627,9 @@ def index(request):
 
     for pdf_file in pdf_files:
         try:
-            data      = _parse_pdf_period(pdf_file, bimester)
-            period_data_list = _collect_periods_to_save(pdf_file, bimester, data)
+            pdf_text = _extract_pdf_text(pdf_file)
+            data      = _parse_pdf_period(pdf_text, bimester)
+            period_data_list = _collect_periods_to_save(pdf_text, bimester, data)
             metrics_by_period = {}
             for period_data in period_data_list:
                 metrics_by_period[period_data['bimester']] = calculate(period_data)

@@ -183,37 +183,31 @@ def _detect_bimester(all_text: str) -> str:
     raise ValueError('Não foi possível detectar automaticamente o bimestre do PDF.')
 
 
-def parse_pdf(file_object, bimester: str = 'auto') -> dict:
-    """
-    Lê o PDF de Quadro Comparativo de Notas e retorna um dict com:
-      - school: nome da escola
-      - class_name: nome da turma
-      - year: ano letivo
-      - bimester: bimestre selecionado
-      - bimester_label: rótulo amigável
-      - subjects: lista de códigos de disciplinas (ex: ['ART', 'C', ...])
-      - students: lista de dicts {num, name, ra, grades}
-    Raises ValueError se o PDF não tiver o formato esperado.
-    """
+def extract_pdf_text(file_object) -> str:
+    """Lê o PDF e extrai todo o texto de uma vez. Operação cara — chamar só 1x por arquivo."""
     reader = PdfReader(file_object)
-
     pages_text = []
     for page in reader.pages:
         text = page.extract_text()
         if text:
             pages_text.append(text)
-
     if not pages_text:
         raise ValueError("Não foi possível extrair texto do PDF.")
-
     all_text = '\n'.join(pages_text)
-
     if 'Quadro Comparativo' not in all_text and 'Bimestre' not in all_text:
         raise ValueError(
             "PDF não reconhecido. Envie o 'Quadro Comparativo de Notas/Faltas' "
             "exportado do sistema escolar."
         )
+    return all_text
 
+
+def parse_from_text(all_text: str, bimester: str = 'auto') -> dict:
+    """
+    Parseia os dados de um bimestre a partir do texto já extraído.
+    Usar junto com extract_pdf_text() para evitar múltiplas leituras do PDF.
+    Raises ValueError se o bimestre não tiver notas lançadas.
+    """
     school, class_name, year = _extract_meta(all_text)
     if bimester in ('auto', '', None):
         bimester = _detect_bimester(all_text)
@@ -228,25 +222,20 @@ def parse_pdf(file_object, bimester: str = 'auto') -> dict:
         line = raw_line.strip()
         if not line:
             continue
-
-        # Pula cabeçalhos e rodapés
         if SKIP_PATTERNS.match(line):
             continue
         if COLUMN_HEADER.match(line):
             continue
 
-        # Nova linha de aluno
         m = STUDENT_LINE.match(line)
         if m:
             if current is not None:
                 students.append(current)
-
             num_str = m.group(1)
             name = m.group(2).strip()
             ra = m.group(3).strip()
             status_text = (m.group(5) or '').strip().lower()
             active = not any(kw in status_text for kw in INACTIVE_KEYWORDS)
-
             current = {
                 'num': int(num_str),
                 'name': name,
@@ -256,12 +245,10 @@ def parse_pdf(file_object, bimester: str = 'auto') -> dict:
             }
             continue
 
-        # Linha de dados do período
         if current and current['active'] and current['grades'] is None:
             if line.startswith(prefix):
                 grades, total_faltas = _extract_grades(line, prefix)
                 if grades and any(g is not None for g in grades):
-                    # Ajusta para o número de disciplinas
                     while len(grades) < len(subjects):
                         grades.append(None)
                     current['grades'] = grades[:len(subjects)]
@@ -270,7 +257,6 @@ def parse_pdf(file_object, bimester: str = 'auto') -> dict:
     if current is not None:
         students.append(current)
 
-    # Filtra apenas alunos ativos com notas no período solicitado
     active = [
         s for s in students
         if s['active']
@@ -296,3 +282,9 @@ def parse_pdf(file_object, bimester: str = 'auto') -> dict:
         'students': active,
         'total_aulas': total_aulas,
     }
+
+
+def parse_pdf(file_object, bimester: str = 'auto') -> dict:
+    """Lê o PDF e parseia o bimestre indicado. Atalho para chamadas únicas."""
+    all_text = extract_pdf_text(file_object)
+    return parse_from_text(all_text, bimester)

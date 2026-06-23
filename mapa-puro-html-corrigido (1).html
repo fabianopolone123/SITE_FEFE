@@ -118,16 +118,16 @@ body{padding:24px}
 .obsRiskEmpty{justify-content:center}
 
 /* --- Pagina 2: card 7 maior e cards de anotacao reorganizados --- */
-.p2 .notesGrid{grid-template-columns:1fr 1fr!important;gap:6px!important;height:904px!important;grid-auto-rows:auto!important}
+.p2 .notesGrid{grid-template-columns:1fr 1fr!important;gap:6px!important;min-height:904px!important;grid-auto-rows:auto!important}
 .p2 .noteCard.r1,.p2 .noteCard.r2,.p2 .noteCard.r3{height:150px!important}
 .p2 .noteCard .sectionHead{padding:7px 9px 2px!important}
 .p2 .noteCard .sectionTitle{font-size:15px!important;line-height:1.05!important}
 .p2 .noteCard .sectionSub{font-size:9px!important;line-height:1.05!important}
 .p2 .noteCard .num{width:28px!important;height:32px!important;font-size:23px!important}
 .p2 .noteCard .ruled{height:calc(100% - 48px)!important;margin:6px 12px 8px!important}
-.p2 .notesGrid .noteCard:nth-child(7){grid-column:1 / -1!important;height:335px!important}
+.p2 .notesGrid .noteCard:nth-child(7){grid-column:1 / -1!important;min-height:335px!important;height:auto!important}
 .p2 .notesGrid .noteCard:nth-child(8){grid-column:1 / -1!important;height:95px!important}
-.p2 [data-key="obs7"].ruled{height:calc(100% - 48px)!important;margin:5px 10px 8px!important;overflow:visible!important}
+.p2 [data-key="obs7"].ruled{min-height:calc(100% - 48px)!important;height:auto!important;margin:5px 10px 8px!important;overflow:visible!important}
 .p2 .obsRisk{gap:5px!important}
 .p2 .obsRiskTop{padding:5px 8px!important}
 .p2 .obsRiskTop strong{font-size:12px!important}
