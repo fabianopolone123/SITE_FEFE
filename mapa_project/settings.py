@@ -74,7 +74,7 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 20 * 1024 * 1024
 CHROME_PATH = os.environ.get('CHROME_PATH', '')
 
 # Subpath de deploy (ex: /mapa quando servido em dominio.com.br/mapa)
-_script_name = os.environ.get('SCRIPT_NAME', '').rstrip('/')
+_script_name = os.environ.get('DJANGO_SCRIPT_NAME', '').rstrip('/')
 if _script_name:
     FORCE_SCRIPT_NAME = _script_name
 
