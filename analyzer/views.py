@@ -157,29 +157,60 @@ def _build_html_report(data, metrics, teacher_name='', evolution=None):
     )
 
     if metrics['at_risk']:
-        desc_lines = {
-            'ATENÇÃO': 'Monitorar e planejar intervenções.',
-            'ALERTA':  'Intervenção pedagógica prioritária.',
-        }
-        desc = desc_lines.get(alert_status, '')
+        rows_html = ''
+        for s in metrics['at_risk']:
+            parts = s['name'].split()
+            short = parts[0] + (' ' + parts[1] if len(parts) > 1 else '')
+            for i, subj in enumerate(s['critical_subjects']):
+                clr = (subj['level']['color'] if subj.get('level') else '#fc1230')
+                if i == 0:
+                    rspan = len(s['critical_subjects'])
+                    name_td = (
+                        f'<td rowspan="{rspan}" style="padding:3px 5px;border-bottom:1px solid #e5ebf2;'
+                        f'font-weight:700;font-size:9.5px;color:#092b5c;vertical-align:middle;'
+                        f'max-width:80px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'
+                        f'{short}</td>'
+                    )
+                else:
+                    name_td = ''
+                rows_html += (
+                    f'<tr>'
+                    f'{name_td}'
+                    f'<td style="padding:3px 5px;border-bottom:1px solid #e5ebf2;font-size:9px;'
+                    f'color:#6a7788;text-align:center;white-space:nowrap">{subj["code"]}</td>'
+                    f'<td style="padding:3px 5px;border-bottom:1px solid #e5ebf2;font-size:9.5px;'
+                    f'font-weight:900;color:{clr};text-align:center">{_fmt(subj["grade"])}</td>'
+                    f'</tr>'
+                )
+        status_badge = (
+            f'<span style="display:inline-block;background:{alert_color};color:#fff;'
+            f'font-size:9px;font-weight:900;padding:2px 7px;border-radius:20px;'
+            f'text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">'
+            f'{alert_status} — {metrics["risk_count"]} aluno(s)</span>'
+        )
         at_risk_html = (
-            f'<div style="{box_style}">'
-            f'<p style="margin:0 0 8px;font-weight:900;font-size:20px;'
-            f'color:{alert_fg};text-transform:uppercase;letter-spacing:.06em;text-align:center">'
-            f'{alert_status}</p>'
-            f'<p style="margin:0 0 6px;font-size:13px;font-weight:700;color:{alert_fg};text-align:center">'
-            f'{metrics["risk_count"]} aluno(s) com nota abaixo de 6,0</p>'
-            f'<p style="margin:0;font-size:11px;color:{alert_fg};text-align:center;font-weight:600">'
-            f'{desc}</p>'
+            f'<div style="height:100%;overflow-y:auto;box-sizing:border-box;font-family:Arial,sans-serif">'
+            f'<div style="text-align:center;padding:4px 0 2px">{status_badge}</div>'
+            f'<table style="width:100%;border-collapse:collapse">'
+            f'<thead><tr style="background:#edf2f7">'
+            f'<th style="text-align:left;padding:4px 5px;border-bottom:2px solid #cfd8e4;'
+            f'font-size:9px;text-transform:uppercase;color:#6a7788;font-weight:900">Aluno</th>'
+            f'<th style="padding:4px;border-bottom:2px solid #cfd8e4;font-size:9px;'
+            f'text-transform:uppercase;color:#6a7788;font-weight:900;text-align:center">Mat.</th>'
+            f'<th style="padding:4px;border-bottom:2px solid #cfd8e4;font-size:9px;'
+            f'text-transform:uppercase;color:#6a7788;font-weight:900;text-align:center">Nota</th>'
+            f'</tr></thead>'
+            f'<tbody>{rows_html}</tbody>'
+            f'</table>'
             f'</div>'
         )
     else:
         at_risk_html = (
             f'<div style="{box_style}">'
-            f'<p style="margin:0 0 8px;font-weight:900;font-size:20px;'
+            f'<p style="margin:0 0 8px;font-weight:900;font-size:16px;'
             f'color:{alert_fg};text-transform:uppercase;letter-spacing:.06em;text-align:center">'
             f'NORMAL</p>'
-            f'<p style="margin:0;font-size:12px;font-weight:700;color:{alert_fg};text-align:center">'
+            f'<p style="margin:0;font-size:11px;font-weight:700;color:{alert_fg};text-align:center">'
             f'Nenhum aluno em nível Básico ou Crítico neste período.</p>'
             f'</div>'
         )
