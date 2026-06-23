@@ -120,9 +120,19 @@ def calculate(data: dict) -> dict:
     satisfactory = level_counts['avancado'] + level_counts['adequado']
     learning_index = round(satisfactory / n * 100, 1) if n else 0
 
+    # ── Frequência média da turma ─────────────────────────────────────────
+    freq_media = None
+    total_aulas = data.get('total_aulas')
+    if total_aulas and total_aulas > 0 and n > 0:
+        total_faltas_turma = sum(s.get('total_faltas') or 0 for s in students)
+        total_possivel = n * total_aulas
+        presencas = total_possivel - total_faltas_turma
+        freq_media = round(presencas / total_possivel * 100, 1)
+
     return {
         'total_students': n,
         'class_average': class_average,
+        'freq_media': freq_media,
         'class_level': get_level(class_average),
         'subject_averages': subject_averages,
         'level_distribution': level_distribution,

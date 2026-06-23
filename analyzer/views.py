@@ -243,8 +243,8 @@ def _build_html_report(data, metrics, teacher_name='', evolution=None):
         'queda':    (evolution or {}).get('queda',    '-'),
         'variacao': (evolution or {}).get('variacao', '-'),
 
-        # Seção 5 — Engajamento (dados manuais)
-        'freq': '-',
+        # Seção 5 — Engajamento
+        'freq': (_fmt(metrics['freq_media']) + '%') if metrics.get('freq_media') is not None else '-',
         'ativ': '-',
         'part': '-',
 

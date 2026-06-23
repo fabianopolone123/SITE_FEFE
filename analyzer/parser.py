@@ -58,9 +58,10 @@ def _parse_float(token: str):
 
 def _extract_grades(line: str, prefix: str):
     """
-    Extrai as notas de uma linha de bimestre.
+    Extrai as notas e total de faltas de uma linha de bimestre.
     Formato: "{prefix} nota falta nota falta ... total_faltas"
     As notas estão nas posições pares (0, 2, 4, ...).
+    Retorna (grades, total_faltas).
     """
     data = line[len(prefix):].strip()
     tokens = data.split()
@@ -70,7 +71,28 @@ def _extract_grades(line: str, prefix: str):
         grade = _parse_float(tokens[i])
         grades.append(grade)
         i += 2  # pula nota + falta
-    return grades if grades else None
+
+    total_faltas = None
+    if tokens:
+        try:
+            total_faltas = int(tokens[-1])
+        except (ValueError, TypeError):
+            f = _parse_float(tokens[-1])
+            if f is not None:
+                total_faltas = int(round(f))
+
+    return (grades if grades else None), total_faltas
+
+
+def _extract_total_aulas(all_text: str) -> int | None:
+    """Extrai o total de aulas (períodos) do cabeçalho do PDF."""
+    for line in all_text.split('\n'):
+        stripped = line.strip()
+        if re.match(r'^Per[ií]odos', stripped, re.IGNORECASE):
+            numbers = re.findall(r'\d+', stripped)
+            if numbers:
+                return int(numbers[0])
+    return None
 
 
 def _extract_meta(all_text: str):
@@ -166,6 +188,7 @@ def parse_pdf(file_object, bimester: str = '1') -> dict:
     school, class_name, year = _extract_meta(all_text)
     subjects = _extract_subjects(all_text)
     prefix = _build_prefix(bimester, year)
+    total_aulas = _extract_total_aulas(all_text)
 
     students = []
     current = None
@@ -205,12 +228,13 @@ def parse_pdf(file_object, bimester: str = '1') -> dict:
         # Linha de dados do período
         if current and current['active'] and current['grades'] is None:
             if line.startswith(prefix):
-                grades = _extract_grades(line, prefix)
+                grades, total_faltas = _extract_grades(line, prefix)
                 if grades and any(g is not None for g in grades):
                     # Ajusta para o número de disciplinas
                     while len(grades) < len(subjects):
                         grades.append(None)
                     current['grades'] = grades[:len(subjects)]
+                    current['total_faltas'] = total_faltas
 
     if current is not None:
         students.append(current)
@@ -239,4 +263,5 @@ def parse_pdf(file_object, bimester: str = '1') -> dict:
         'bimester_label': bimester_label,
         'subjects': subjects,
         'students': active,
+        'total_aulas': total_aulas,
     }
