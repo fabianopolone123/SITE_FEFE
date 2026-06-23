@@ -79,7 +79,7 @@ Lê o PDF "Quadro Comparativo de Notas/Faltas" do sistema adventista.
       'total_faltas': 4,   # total de faltas do aluno no bimestre
     }, ...
   ],
-  'total_aulas': 50,  # Períodos do bimestre (extraído do cabeçalho do PDF)
+  'total_aulas': 50,  # Fixo em 50 aulas por bimestre (constante no calculator.py)
 }
 ```
 
@@ -100,7 +100,7 @@ Calcula todas as métricas a partir dos dados do parser.
 |---------|-----------|
 | `total_students` | Número de alunos ativos com notas |
 | `class_average` | Média geral da turma (média das médias por disciplina) |
-| `freq_media` | Frequência média % = [(alunos × aulas) - total_faltas] ÷ (alunos × aulas) × 100 |
+| `freq_media` | Frequência % = [(alunos × 50) − Σfaltas] ÷ (alunos × 50) × 100. Total de aulas fixo = 50/bimestre |
 | `subject_averages` | Lista com média por disciplina + nível |
 | `level_distribution` | Contagem e % em Avançado/Adequado/Básico/Crítico |
 | `at_risk` | Alunos com ≥1 disciplina abaixo de 6,0 |
@@ -122,7 +122,13 @@ Calcula todas as métricas a partir dos dados do parser.
 Handler principal GET/POST. Recebe PDF(s), bimestre, nome do professor. Chama parser → calculator → `_build_html_report()`. Um PDF = exibe relatório direto. Vários PDFs = página de cards com links.
 
 ### `_build_html_report(data, metrics, teacher_name, evolution)`
-Lê o template HTML do disco, injeta dados via script JavaScript (`data_map` → `data-key`). Também calcula status de alerta pedagógico (NORMAL / ATENÇÃO / ALERTA) e gera o HTML do box colorido na seção 7.
+Lê o template HTML do disco, injeta dados via script JavaScript (`data_map` → `data-key`). Também calcula status de alerta pedagógico (NORMAL / ATENÇÃO / ALERTA) e gera a tabela de alunos em risco para a seção 7 (campo `alerta-note`).
+
+**Tabela de alunos em risco (seção 7):**
+- Badge colorido com status e contagem no topo
+- Tabela: Aluno | Mat. | Nota — uma linha por disciplina crítica por aluno
+- Nota colorida conforme nível (vermelho = crítico, laranja = básico)
+- Se nenhum aluno em risco → exibe "NORMAL" centralizado
 
 ### `_get_evolution(pdf_file, bimester, current_data)`
 Relê o PDF com bimestre anterior e calcula crescimento/estabilidade/queda por aluno.
@@ -140,19 +146,30 @@ Serve HTML temporário (armazenado em memória) para Chrome headless buscar via 
 Arquivo grande (~1600 linhas). Duas páginas A4 dentro de `<section class="sheet">`.
 
 **Página 1** (`id="page1"`):
-- Header: MAPA + títulos + logo Adventista
-- Info: escola, turma, ano letivo, professor, data
+- Header: MAPA + títulos + logo Adventista (PNG fundo transparente, base64 inline)
+- Info: escola, turma, ano letivo, professor, data (3 colunas)
 - Seção 1: Resumo geral (total alunos, média, IAT, alunos em risco, meta)
-- Row2: Seções 2 (Distribuição), 3 (Disciplinas), 4 (Evolução)
-- Row3: Seções 5 (Engajamento), 6 (Taxa de risco), 7 (Alerta pedagógico)
-- Responsáveis (assinaturas)
+- Row2: Seções 2 (Distribuição nível), 3 (Disciplinas), 4 (Evolução)
+- Row3 (3 colunas, 420px): Seções 5 (Engajamento — frequência calculada), 6 (Taxa de risco), 7 (Alerta pedagógico)
+- Seção 7: coluna esquerda = condições de alerta + status; coluna direita = tabela de alunos em risco (nome, matéria, nota)
+- Responsáveis: `.sign` com ícone + Professor(a) + Coordenação Pedagógica
 - Footer com ciclo MAPA
 
 **Página 2** (`id="page2"`):
 - Header idêntico ao p1
-- NotesGrid: 8 noteCards de observações (1 por seção)
-- Bottom2: Responsáveis (PROFESSOR(A) + COORDENAÇÃO PEDAGÓGICA)
-- Footer2 com ícones
+- NotesGrid (2 colunas): 8 noteCards de observações (r1×2, r2×2, r3×2, r4×2=seções 7 e 8)
+- Bottom2 (135px): Responsáveis igual ao da página 1 (`.sign`)
+- Footer2 com ícones ANALISAR / INDICADORES / AÇÕES
+
+**Campos data-key injetados pelo views.py:**
+- Cabeçalho: `p1-escola`, `p1-turma`, `p1-ano`, `p1-prof`, `p1-d1/d2/d3`
+- Resumo: `total-alunos`, `media-geral`, `iat`, `risco-qtd`, `risco-pct`, `meta`
+- Níveis: `avancado`, `adequado`, `basico`, `critico` (+ `-q` para contagem)
+- Disciplinas: `lp`, `mat`, `cie`, `his`, `geo`, `ing`, `ef`, `er`, `artes`
+- Evolução: `cres`, `estab`, `queda`, `variacao`
+- Engajamento: `freq` (calculado), `ativ`, `part` (manuais)
+- Risco: `taxa-risco`, `qtd-risco`
+- Alerta: `alerta-note` (HTML da tabela de alunos em risco)
 
 **Injeção de dados:**
 Todos os campos têm `data-key="nome-do-campo"`. O JavaScript gerado pelo `_build_html_report()` preenche via `el.innerHTML = D[key]`.
@@ -191,3 +208,17 @@ python manage.py runserver
 ## Repositório GitHub
 
 `https://github.com/fabianopolone123/SITE_FEFE.git` — branch `main`
+
+---
+
+## Histórico de decisões importantes
+
+| Decisão | Motivo |
+|---------|--------|
+| Chrome headless via HTTP (não file://) | `file:///` bloqueado no Windows + extensão Kaspersky injeta scripts |
+| Scripts Kaspersky removidos antes do headless | Interfere na renderização do Chrome headless |
+| zoom: 73% no CSS de impressão | 1024px × 73% ≈ 748px (< 794px A4); 1536px × 73% ≈ 1122px = altura A4 |
+| Total de aulas fixo = 50 por bimestre | Definido pelo usuário; não extraído do PDF |
+| total_faltas por aluno = último token da linha de notas | Formato do PDF adventista: `nota falta ... nota falta total_faltas` |
+| Logo inline base64 | Evita problemas de caminho relativo no Chrome headless |
+| Sem banco de dados | Sistema stateless — cada PDF gera relatório independente |
