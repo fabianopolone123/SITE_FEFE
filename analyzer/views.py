@@ -552,7 +552,7 @@ def _build_html_report(data, metrics, teacher_name='', evolution=None):
     return html
 
 
-def _build_results_page(results, errors):
+def _build_results_page(results, errors, index_url='/'):
     """Página de resultados para múltiplos PDFs processados."""
     cards_html = ''
     for i, r in enumerate(results):
@@ -596,9 +596,14 @@ def _build_results_page(results, errors):
         'padding:.6rem 1.4rem;font-weight:700;cursor:pointer;font-size:.9rem;white-space:nowrap}'
         '.btn:hover{opacity:.85}'
         '.btn-all{background:#27ae60;display:block;margin:1.2rem auto 0;padding:.8rem 2rem;font-size:1rem}'
+        '.btn-back{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#1a3a5c;'
+        'border:1px solid #1a3a5c;border-radius:6px;padding:.5rem 1.2rem;font-weight:700;'
+        'font-size:.9rem;text-decoration:none;margin-bottom:1rem}'
+        '.btn-back:hover{background:#eaf2fb}'
         '.errors{background:#fdecea;border-left:4px solid #e74c3c;border-radius:6px;'
         'padding:1rem;margin-bottom:1rem;font-size:.9rem}'
         '</style></head><body>'
+        f'<a class="btn-back" href="{index_url}">&#8592; Voltar ao menu</a>'
         '<div class="header"><h1>MAPA — Relatórios Gerados</h1>'
         '<p>' + str(len(results)) + ' relatório(s) processado(s) com sucesso. Escolha o bimestre para abrir.</p></div>'
         + errors_html
@@ -704,7 +709,7 @@ def index(request):
     if output_fmt == 'html':
         if len(results) == 1 and not errors:
             return HttpResponse(results[0]['html'], content_type='text/html; charset=utf-8')
-        return HttpResponse(_build_results_page(results, errors), content_type='text/html; charset=utf-8')
+        return HttpResponse(_build_results_page(results, errors, reverse('index')), content_type='text/html; charset=utf-8')
 
     # ── Saída PDF ─────────────────────────────────────────────────────────
     if len(results) == 1 and not errors:
