@@ -534,34 +534,20 @@ def _build_html_report(data, metrics, teacher_name='', evolution=None):
 """
 
     index_url = reverse('index')
-    back_button = f"""
-<style>
-#btn-voltar {{
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 9999;
-  background: #1a3a5c;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 22px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0,0,0,.25);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: "Segoe UI", system-ui, sans-serif;
-}}
-#btn-voltar:hover {{ background: #2980b9; }}
-@media print {{ #btn-voltar {{ display: none !important; }} }}
-</style>
-<a id="btn-voltar" href="{index_url}">&#8592; Menu inicial</a>
+    injection += f"""
+<script>
+(function() {{
+  var toolbar = document.querySelector('.toolbar');
+  if (!toolbar) return;
+  var btn = document.createElement('a');
+  btn.href = '{index_url}';
+  btn.textContent = '← Menu inicial';
+  btn.style.cssText = 'background:#fff;color:#1a3a5c;border:1px solid #1a3a5c;border-radius:8px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px #0002;text-decoration:none;font-size:14px;display:inline-flex;align-items:center;';
+  toolbar.insertBefore(btn, toolbar.firstChild);
+}})();
+</script>
 """
-    html = html.replace('</body>', back_button + injection + '\n</body>')
+    html = html.replace('</body>', injection + '\n</body>')
     return html
 
 
