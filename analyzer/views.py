@@ -12,6 +12,7 @@ from pathlib import Path
 from django.db import transaction
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, JsonResponse
+from django.urls import reverse
 from django.utils import timezone
 
 from .parser import parse_pdf
@@ -532,7 +533,35 @@ def _build_html_report(data, metrics, teacher_name='', evolution=None):
 </script>
 """
 
-    html = html.replace('</body>', injection + '\n</body>')
+    index_url = reverse('index')
+    back_button = f"""
+<style>
+#btn-voltar {{
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  background: #1a3a5c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}}
+#btn-voltar:hover {{ background: #2980b9; }}
+@media print {{ #btn-voltar {{ display: none !important; }} }}
+</style>
+<a id="btn-voltar" href="{index_url}">&#8592; Menu inicial</a>
+"""
+    html = html.replace('</body>', back_button + injection + '\n</body>')
     return html
 
 
