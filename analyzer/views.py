@@ -3,6 +3,8 @@ import os
 import re
 import subprocess
 import tempfile
+import threading
+import uuid as _uuid_mod
 from datetime import datetime
 from pathlib import Path
 
@@ -520,6 +522,11 @@ def index(request):
     return resp
 
 
+# Armazena HTMLs temporários para o Chrome headless buscar via HTTP
+_pending_reports: dict = {}
+_pending_lock = threading.Lock()
+
+
 def _find_chrome():
     candidates = [
         r'C:\Program Files\Google\Chrome\Application\chrome.exe',
@@ -533,12 +540,29 @@ def _find_chrome():
     return None
 
 
+def _strip_extensions_scripts(html: str) -> str:
+    """Remove scripts injetados por extensões (ex: Kaspersky) que quebram o headless."""
+    return re.sub(
+        r'<script[^>]+(?:kaspersky|kis\.v2\.scr|gc\.kis)[^>]*>.*?</script>',
+        '', html, flags=re.DOTALL | re.IGNORECASE,
+    )
+
+
+def serve_temp_report(request, report_id):
+    """Serve o HTML temporário para o Chrome headless."""
+    with _pending_lock:
+        html = _pending_reports.get(report_id)
+    if html is None:
+        return HttpResponse(status=404)
+    return HttpResponse(html, content_type='text/html; charset=utf-8')
+
+
 def export_pdf(request):
-    """Recebe HTML do relatório via POST e retorna um PDF gerado pelo Chrome headless."""
+    """Recebe HTML via POST, serve via localhost e usa Chrome headless para gerar PDF."""
     if request.method != 'POST':
         return HttpResponse(status=405)
 
-    html_content = request.POST.get('html', '')
+    html_raw = request.POST.get('html', '')
     raw_name = request.POST.get('filename', 'mapa-relatorio')
     filename = re.sub(r'[\\/*?:"<>|]', '', raw_name)[:80].strip() or 'mapa-relatorio'
 
@@ -549,14 +573,17 @@ def export_pdf(request):
             status=500, content_type='text/plain; charset=utf-8',
         )
 
-    with tempfile.NamedTemporaryFile(
-        suffix='.html', delete=False, mode='w', encoding='utf-8'
-    ) as fh:
-        fh.write(html_content)
-        html_path = fh.name
+    # Limpa scripts de extensão e salva temporariamente em memória
+    html_clean = _strip_extensions_scripts(html_raw)
+    report_id = str(_uuid_mod.uuid4())
+    with _pending_lock:
+        _pending_reports[report_id] = html_clean
 
-    pdf_path = html_path[:-5] + '.pdf'
-    file_url = 'file:///' + html_path.replace('\\', '/')
+    # URL acessível pelo Chrome headless via Django rodando localmente
+    host = request.META.get('HTTP_HOST', '127.0.0.1:8000')
+    page_url = f'http://{host}/temp-report/{report_id}/'
+
+    pdf_path = os.path.join(tempfile.gettempdir(), f'mapa_{report_id}.pdf')
 
     try:
         base_flags = [
@@ -565,26 +592,26 @@ def export_pdf(request):
             '--no-sandbox',
             '--disable-extensions',
             '--disable-dev-shm-usage',
+            '--run-all-compositor-stages-before-draw',
             f'--print-to-pdf={pdf_path}',
             '--no-pdf-header-footer',
             '--print-to-pdf-no-header',
         ]
-        # Tenta novo headless (Chrome 112+), se falhar usa o antigo
+        result = None
         for headless_flag in ('--headless=new', '--headless'):
-            cmd = [base_flags[0], headless_flag] + base_flags[1:]
-            result = subprocess.run(cmd, capture_output=True, timeout=45)
-            if result.returncode == 0 and os.path.exists(pdf_path) and os.path.getsize(pdf_path) > 100:
+            cmd = [base_flags[0], headless_flag] + base_flags[1:] + [page_url]
+            result = subprocess.run(cmd, capture_output=True, timeout=60)
+            if result.returncode == 0 and os.path.exists(pdf_path) and os.path.getsize(pdf_path) > 500:
                 break
-            # remove pdf corrompido antes de tentar de novo
             try:
                 os.unlink(pdf_path)
             except OSError:
                 pass
 
-        if not os.path.exists(pdf_path) or os.path.getsize(pdf_path) < 100:
-            stderr = (result.stderr or b'').decode('utf-8', errors='replace')
+        if not os.path.exists(pdf_path) or os.path.getsize(pdf_path) < 500:
+            stderr = (result.stderr if result else b'').decode('utf-8', errors='replace')
             return HttpResponse(
-                f'Falha ao gerar PDF. Detalhe: {stderr[:300]}',
+                f'Falha ao gerar PDF.\n{stderr[:400]}',
                 status=500, content_type='text/plain; charset=utf-8',
             )
 
@@ -596,12 +623,13 @@ def export_pdf(request):
         return response
 
     except subprocess.TimeoutExpired:
-        return HttpResponse('Timeout ao gerar PDF (>45s).', status=500, content_type='text/plain; charset=utf-8')
+        return HttpResponse('Timeout ao gerar PDF (>60s).', status=500, content_type='text/plain; charset=utf-8')
     except Exception as exc:
         return HttpResponse(f'Erro: {exc}', status=500, content_type='text/plain; charset=utf-8')
     finally:
-        for p in (html_path, pdf_path):
-            try:
-                os.unlink(p)
-            except OSError:
-                pass
+        with _pending_lock:
+            _pending_reports.pop(report_id, None)
+        try:
+            os.unlink(pdf_path)
+        except OSError:
+            pass
