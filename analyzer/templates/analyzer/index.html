@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAPA — Monitoramento de Aprendizagem</title>
+  <style>
+    :root {
+      --blue-dark:  #1a3a5c;
+      --blue-mid:   #2980b9;
+      --blue-light: #3498db;
+      --green:      #27ae60;
+      --yellow:     #f39c12;
+      --orange:     #e67e22;
+      --red:        #e74c3c;
+      --bg:         #f0f4f8;
+      --white:      #ffffff;
+      --border:     #d1d9e0;
+      --text:       #2c3e50;
+      --muted:      #7f8c8d;
+      --radius:     10px;
+      --shadow:     0 4px 20px rgba(0,0,0,.10);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
+      color: white;
+      padding: 2rem 1.5rem 1.8rem;
+      text-align: center;
+    }
+    header .badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 20px;
+      font-size: .75rem;
+      letter-spacing: .06em;
+      padding: .25rem .9rem;
+      margin-bottom: .9rem;
+      text-transform: uppercase;
+    }
+    header h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      line-height: 1.2;
+    }
+    header p {
+      margin-top: .5rem;
+      font-size: .95rem;
+      opacity: .8;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────────── */
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    /* ── Card ───────────────────────────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .card-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      margin-left: .5rem;
+    }
+
+    /* ── Drag-and-drop zone ─────────────────────────────────────────── */
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--blue-light);
+      background: #ebf5fb;
+    }
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .drop-icon {
+      font-size: 2.8rem;
+      margin-bottom: .6rem;
+      display: block;
+    }
+    .drop-label {
+      font-size: .95rem;
+      color: var(--muted);
+    }
+    .drop-label strong { color: var(--blue-light); }
+    .file-name {
+      margin-top: .8rem;
+      font-size: .85rem;
+      color: var(--green);
+      font-weight: 600;
+      display: none;
+    }
+
+    /* ── Bimestre selector ──────────────────────────────────────────── */
+    .bimester-grid {
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+      margin-top: .5rem;
+    }
+    .bimester-opt {
+      position: relative;
+      flex: 1;
+      min-width: 100px;
+    }
+    .bimester-opt input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+    }
+    .bimester-opt label {
+      display: block;
+      padding: .65rem .5rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: border-color .15s, background .15s, color .15s;
+      user-select: none;
+    }
+    .bimester-opt input:checked + label {
+      border-color: var(--blue-light);
+      background: var(--blue-light);
+      color: white;
+      font-weight: 600;
+    }
+    .bimester-opt label:hover {
+      border-color: var(--blue-light);
+      background: #ebf5fb;
+    }
+
+    /* ── Separator ──────────────────────────────────────────────────── */
+    .sep { margin: 1.5rem 0; border: none; border-top: 1px solid var(--border); }
+
+    /* ── Button ─────────────────────────────────────────────────────── */
+    .btn-generate {
+      width: 100%;
+      padding: .9rem;
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .02em;
+      transition: opacity .2s, transform .1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+    }
+    .btn-generate:hover  { opacity: .92; }
+    .btn-generate:active { transform: scale(.99); }
+    .btn-generate:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── Alert ──────────────────────────────────────────────────────── */
+    .alert {
+      border-radius: 8px;
+      padding: .9rem 1rem;
+      margin-bottom: 1.2rem;
+      font-size: .9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: .5rem;
+    }
+    .alert-error {
+      background: #fdecea;
+      border-left: 4px solid var(--red);
+      color: #922b21;
+    }
+
+    /* ── Critérios pill ─────────────────────────────────────────────── */
+    .criteria-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: .6rem;
+      margin-top: 1.2rem;
+    }
+    .criterion {
+      border-radius: 8px;
+      padding: .7rem .9rem;
+      font-size: .82rem;
+      border-left: 3px solid;
+    }
+    .criterion.green  { background: #eafaf1; border-color: var(--green);  color: #1d6a3b; }
+    .criterion.yellow { background: #fef9e7; border-color: var(--yellow); color: #7d6608; }
+    .criterion.orange { background: #fdf2e9; border-color: var(--orange); color: #784212; }
+    .criterion.red    { background: #fdedec; border-color: var(--red);    color: #922b21; }
+    .criterion strong { display: block; font-size: .88rem; margin-bottom: .15rem; }
+
+    /* ── Spinner ────────────────────────────────────────────────────── */
+    .spinner {
+      display: none;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Footer ─────────────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Sistema Escolar Adventista</div>
+  <h1>MAPA</h1>
+  <p>Monitoramento de Aprendizagem Pedagógica Anual</p>
+</header>
+
+<main>
+
+  {% if error %}
+  <div class="alert alert-error">
+    <span>⚠️</span>
+    <div>{{ error }}</div>
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="card-title">📄 Gerar Relatório</div>
+
+    <form method="post" enctype="multipart/form-data" id="uploadForm">
+      {% csrf_token %}
+
+      <!-- Drop zone -->
+      <div class="drop-zone" id="dropZone">
+        <input type="file" name="pdf_file" id="pdfFile" accept=".pdf" multiple required>
+        <span class="drop-icon">📋</span>
+        <p class="drop-label">
+          <strong>Clique ou arraste</strong> os PDFs aqui<br>
+          <small>Quadro Comparativo de Notas / Faltas — um ou vários</small>
+        </p>
+        <p class="file-name" id="fileName"></p>
+      </div>
+
+      <hr class="sep">
+
+      <!-- Campo professor (opcional) -->
+      <p style="font-size:.85rem;font-weight:600;color:var(--blue-dark);margin-bottom:.5rem;">
+        Professor(a) <span style="font-weight:400;color:var(--muted)">(opcional)</span>
+      </p>
+      <input type="text" name="teacher" placeholder="Nome do professor(a)"
+        style="width:100%;padding:.55rem .75rem;border:1.5px solid var(--border);
+               border-radius:8px;font-size:.9rem;color:var(--text);outline:none;
+               transition:border-color .15s"
+        onfocus="this.style.borderColor='var(--blue-light)'"
+        onblur="this.style.borderColor='var(--border)'">
+
+      <hr class="sep">
+
+      <!-- Bimestre selector -->
+      <p style="font-size:.85rem;font-weight:600;color:var(--blue-dark);margin-bottom:.6rem;">
+        Selecione o período:
+      </p>
+      <div class="bimester-grid">
+        {% for value, label in bimester_choices %}
+        <div class="bimester-opt">
+          <input type="radio" name="bimester" id="bim_{{ value }}" value="{{ value }}"
+            {% if selected_bimester == value or not selected_bimester and value == '1' %}checked{% endif %}>
+          <label for="bim_{{ value }}">{{ label }}</label>
+        </div>
+        {% endfor %}
+      </div>
+
+      <hr class="sep">
+
+      <!-- Formato de saída -->
+      <p style="font-size:.85rem;font-weight:600;color:var(--blue-dark);margin-bottom:.6rem;">
+        Formato de saída:
+      </p>
+      <div class="bimester-grid">
+        <div class="bimester-opt">
+          <input type="radio" name="output_format" id="fmt_html" value="html" checked>
+          <label for="fmt_html">
+            Formulário HTML
+            <span style="display:block;font-size:.72rem;font-weight:400;opacity:.8">Visualiza e imprime pelo navegador</span>
+          </label>
+        </div>
+        <div class="bimester-opt">
+          <input type="radio" name="output_format" id="fmt_pdf" value="pdf">
+          <label for="fmt_pdf">
+            PDF direto
+            <span style="display:block;font-size:.72rem;font-weight:400;opacity:.8">Download automático</span>
+          </label>
+        </div>
+      </div>
+
+      <hr class="sep">
+
+      <button type="submit" class="btn-generate" id="submitBtn">
+        <div class="spinner" id="spinner"></div>
+        <span id="btnText">Enviar Relatório</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Legenda de níveis -->
+  <div class="card" style="margin-top:1.2rem;">
+    <div class="card-title">🧠 Critérios de Classificação</div>
+    <div class="criteria-grid">
+      <div class="criterion green">
+        <strong>🟢 Avançado</strong>
+        Nota de 8,0 a 10
+      </div>
+      <div class="criterion yellow">
+        <strong>🟡 Adequado</strong>
+        Nota de 6,0 a 7,9
+      </div>
+      <div class="criterion orange">
+        <strong>🟠 Básico</strong>
+        Nota de 4,0 a 5,9
+      </div>
+      <div class="criterion red">
+        <strong>🔴 Crítico</strong>
+        Nota de 0 a 3,9
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>MAPA — Monitoramento de Aprendizagem Pedagógica Anual</footer>
+
+<script>
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('pdfFile');
+  const fileName  = document.getElementById('fileName');
+  const form      = document.getElementById('uploadForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const spinner   = document.getElementById('spinner');
+  const btnText   = document.getElementById('btnText');
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length === 1) {
+      fileName.style.display = 'block';
+      fileName.textContent = '✅ ' + fileInput.files[0].name;
+    } else if (fileInput.files.length > 1) {
+      fileName.style.display = 'block';
+      fileName.textContent = '✅ ' + fileInput.files.length + ' arquivos selecionados';
+    }
+  });
+
+  ['dragover', 'dragenter'].forEach(evt =>
+    dropZone.addEventListener(evt, e => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    })
+  );
+  ['dragleave', 'drop'].forEach(evt =>
+    dropZone.addEventListener(evt, e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (evt === 'drop' && e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        const n = e.dataTransfer.files.length;
+        fileName.style.display = 'block';
+        fileName.textContent = n === 1
+          ? '✅ ' + e.dataTransfer.files[0].name
+          : '✅ ' + n + ' arquivos selecionados';
+      }
+    })
+  );
+
+  form.addEventListener('submit', () => {
+    submitBtn.disabled = true;
+    spinner.style.display = 'block';
+    btnText.textContent = 'Processando…';
+    // Re-habilita após 15s (caso o servidor retorne PDF inline)
+    setTimeout(() => {
+      submitBtn.disabled = false;
+      spinner.style.display = 'none';
+      btnText.textContent = 'Enviar Relatório';
+    }, 15000);
+  });
+</script>
+
+</body>
+</html>

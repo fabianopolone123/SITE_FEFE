@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MAPA - Monitoramento de Aprendizagem Pedagógica Anual</title>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=kNLsSCsitxHRHFN1vH9SU-2WFrN0UCR8pU6QVeWbLh0KFwHek3jarsl3jZ8n_eVM8s_nLeKJ_ZylMvlz7cQsROxa8hzILeCpTln7UIeJ_4ez1BqBCkz2L93hl9iTRtKm5AoSDr1U8GNd13p24zcEbcZT8Dkw7mXSpI-GGEYrDhtNOzHJXMGysvASoYTLofE5ttVGPi5ig7NMgCa8IxqJHClOoBejZ0aHmFah1vbB-kJQa2nzFHC8p-yGbkCaPe80O52H4hzcqogtrM8ubYAOPw45rcWn90p3n3pPB0HPN21Z73HthPmXl0iITLc0puiLwLwO-sjmoOAIen6-I0_6nA" charset="UTF-8"></script><style>
+:root{
+  --navy:#002a5c;
+  --navy2:#062f67;
+  --teal:#009a9c;
+  --teal-dark:#007569;
+  --green:#208a35;
+  --orange:#f4a51c;
+  --red:#fc1230;
+  --blue:#007bc8;
+  --line:#cfd8e4;
+  --line2:#e5ebf2;
+  --text:#092b5c;
+  --muted:#6a7788;
+  --paper:#fff;
+  --soft:#f7f9fc;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#e8edf4;color:var(--text);font-family:Arial,Helvetica,sans-serif}
+body{padding:24px}
+.toolbar{position:sticky;top:0;z-index:20;margin:0 auto 16px;max-width:1024px;display:flex;gap:10px;justify-content:flex-end}
+.toolbar button{background:var(--navy);color:#fff;border:0;border-radius:8px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px #0002}.toolbar button.secondary{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.sheet{width:1024px;height:1536px;background:#fff;margin:0 auto 22px;position:relative;overflow:hidden;box-shadow:0 12px 35px #001d4626}.page{position:absolute;inset:0;padding:0 8px 0}.no-img-badge{position:absolute;right:14px;bottom:88px;color:#ffffffaa;font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.header{height:173px;position:relative;display:grid;grid-template-columns:382px 1fr 202px;align-items:center;border-bottom:2px solid var(--line2);padding-left:12px}.mapa{font-weight:900;font-size:116px;letter-spacing:8px;color:var(--navy);line-height:1}.titleBox{height:126px;border-left:3px solid var(--navy);padding-left:28px;padding-top:7px}.titleBox .title{font-size:28px;line-height:1.25;font-weight:900;color:var(--navy);text-transform:uppercase}.titleBox .sub{font-size:24px;font-weight:900;color:var(--teal);margin-top:7px;text-transform:uppercase}.titleBox .desc{font-size:16px;margin-top:8px;color:#1d2f4a}.brand{height:172px;position:relative;background:var(--navy);clip-path:polygon(35% 0,100% 0,100% 100%,0 100%);display:flex;align-items:center;justify-content:center;color:#fff}.brand .brandInner{margin-left:38px;text-align:center}.brand .bigA{font-weight:900;font-size:62px;line-height:.8;font-style:italic;letter-spacing:-5px}.brand .brandText{font-size:25px;font-weight:800;line-height:1.05;margin-top:10px}.info{height:108px;border:2px solid var(--line);border-radius:9px;margin:8px 0 10px;display:grid;grid-template-columns:1.04fr 1.02fr 1fr;overflow:hidden}.infoCol{display:grid;grid-template-columns:74px 1fr;align-items:center;padding:0 18px;border-right:2px solid var(--line)}.infoCol:last-child{border-right:0}.infoText{font-size:14px;font-weight:900;text-transform:uppercase}.lineRow{display:flex;align-items:center;gap:8px;margin:13px 0}.fill{display:inline-block;border-bottom:2px solid #73849c;min-width:180px;height:20px;vertical-align:bottom;outline:0;font-weight:600;padding:0 2px;color:#111}.fill.small{min-width:72px}.fill.med{min-width:145px}.datefill{min-width:50px;text-align:center}.bim{display:inline-flex;align-items:center;gap:10px;margin-top:6px}.boxcheck{width:15px;height:15px;border:2px solid #6e7d91;display:inline-block;border-radius:2px;vertical-align:-2px;margin-right:3px}.content{display:grid;gap:8px}.card{border:2px solid var(--line2);border-radius:8px;background:#fff;overflow:hidden}.sectionHead{display:flex;align-items:flex-start;gap:12px;padding:10px 12px 8px}.num{width:34px;height:38px;border-radius:5px;background:var(--navy);color:#fff;font-size:28px;font-weight:900;display:flex;align-items:center;justify-content:center;line-height:1}.sectionTitle{font-size:20px;font-weight:900;text-transform:uppercase;letter-spacing:.01em;color:var(--navy)}.sectionSub{font-size:12px;font-weight:700;color:#20385f;margin-top:3px}.iconRound{width:55px;height:55px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:#fff;flex:0 0 auto}.iconRound.teal{background:var(--teal)}.iconRound.green{background:var(--teal-dark)}.iconRound.blue{background:var(--navy)}.iconRound.orange{background:var(--orange)}.iconRound.red{background:var(--red)}.iconRound svg{width:34px;height:34px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.iconRound svg.fillit{fill:currentColor;stroke:none}.s1{height:214px}.summaryGrid{display:grid;grid-template-columns:1.18fr 1.18fr 1.45fr 1.18fr 1.18fr;gap:10px;padding:8px}.summaryCard{height:129px;border:2px solid var(--line2);border-radius:7px;display:grid;grid-template-columns:70px 1fr;align-items:center;padding:14px 12px}.summaryCard .label{font-weight:900;text-transform:uppercase;font-size:14px;line-height:1.35}.summaryCard .bigLine{border-bottom:2px solid #697a92;min-width:72px;height:26px;margin-top:20px}.summaryCard .pct{font-weight:900;text-align:center;margin-top:10px}.summaryCard .paren{font-size:18px;letter-spacing:.04em}.row2{display:grid;grid-template-columns:39% 29% 1fr;gap:8px;height:434px}.s2,.s3,.s4{height:434px}.s2body{display:grid;grid-template-columns:218px 1fr;gap:10px;padding:6px 10px 8px}.donut{width:204px;height:204px;border-radius:50%;background:conic-gradient(var(--blue) 0 27%, var(--red) 27% 50%, var(--orange) 50% 76%, var(--green) 76% 100%);position:relative;margin:8px auto 0}.donut:after{content:"";position:absolute;inset:56px;border-radius:50%;background:#fff}.donutLabel{position:absolute;color:#fff;font-weight:900;font-size:18px}.d1{top:36px;right:24px}.d2{right:38px;bottom:54px}.d3{left:28px;bottom:57px}.d4{left:35px;top:35px}.legend{border:2px solid var(--line2);border-radius:7px;margin-top:25px;height:190px;padding:18px 13px;font-weight:800;font-size:12px}.leg{display:flex;gap:11px;align-items:center;margin:17px 0}.dot{width:15px;height:15px;border-radius:50%;display:inline-block;flex:0 0 auto}.miniGrid{grid-column:1/3;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:2px}.mini{border:2px solid var(--line2);border-radius:7px;height:83px;text-align:center;padding-top:13px;font-weight:900;text-transform:uppercase;font-size:12px}.mini .u{font-size:17px;margin-top:12px;color:#314662}.tableWrap{padding:8px}.discipline{width:100%;border-collapse:collapse;font-weight:900;font-size:13px}.discipline th{height:44px;background:#f9fbfd;color:var(--navy);font-size:12px;border:1px solid var(--line2);text-align:center}.discipline td{border:1px solid var(--line2);height:33px;padding:0 12px}.discipline td:last-child{text-align:center}.scoreLine{display:inline-block;border-bottom:2px solid #74859d;width:74px;height:15px}.evolution{padding:0 8px}.evoTable{border:2px solid var(--line2);border-radius:7px;overflow:hidden;margin:6px 0 12px}.evoRow{height:74px;display:grid;grid-template-columns:68px 1fr 129px;align-items:center;border-bottom:1px solid var(--line2)}.evoRow:last-child{border-bottom:0}.evoText{font-size:13px;font-weight:900;text-transform:uppercase;line-height:1.25}.evoText small{font-size:11px;text-transform:none}.evoPct{border-left:1px solid var(--line2);height:100%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px}.arrow{font-size:42px;font-weight:900;color:#fff;line-height:1}.equal{font-size:36px;font-weight:900;color:#fff}.variation{border:2px solid var(--line2);border-radius:8px;height:86px;display:grid;grid-template-columns:1fr 102px;align-items:center;padding-left:13px;font-weight:900;text-transform:uppercase}.variation small{display:block;text-transform:none;font-weight:800}.varBox{border:2px solid var(--navy);border-radius:7px;height:64px;margin-right:6px;display:flex;align-items:center;justify-content:center}.row3{display:grid;grid-template-columns:36.3% 30.5% 1fr;gap:8px;height:359px}.s5,.s6,.s7{height:359px}.engage{padding:5px 12px 10px}.engRow{height:58px;display:grid;grid-template-columns:46px 1fr 103px;align-items:center}.engText{font-weight:900;text-transform:uppercase;font-size:14px;line-height:1.2}.engText small{display:block;font-size:11px;text-transform:none;font-weight:800}.smallInput{height:45px;border:2px solid var(--line2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px}.scale{text-align:center;font-weight:900;font-size:13px;padding:8px 0 10px}.ie{height:66px;background:linear-gradient(90deg,#fff4e6,#fff);border-radius:4px;display:grid;grid-template-columns:1fr 110px;align-items:center;padding:0 18px;font-weight:900;text-transform:uppercase}.riskBody{display:grid;place-items:center;padding-top:4px}.riskDonut{width:178px;height:178px;border-radius:50%;background:conic-gradient(var(--red) 0 23%, #dce0e6 23% 100%);position:relative;margin-top:2px}.riskDonut:after{content:"";position:absolute;inset:50px;border-radius:50%;background:#fff}.riskDonut .inside{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1;font-weight:900;text-align:center}.riskDonut .inside b{font-size:26px}.riskBottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;padding:8px}.riskCell{border:2px solid var(--line2);border-radius:7px;height:68px;text-align:center;padding:12px 8px;font-weight:900;text-transform:uppercase;font-size:12px}.riskCell strong{font-size:32px;color:var(--red)}.alertBody{display:grid;grid-template-columns:1fr 126px;gap:8px;padding:0 10px 10px}.alertText{font-weight:800;font-size:12px;line-height:1.35}.alertText p{margin:0 0 5px}.alertText ul{margin:4px 0 8px 18px;padding:0}.status{border:2px solid var(--line2);border-radius:6px;overflow:hidden}.status h4{margin:0;background:#fbfcfe;border-bottom:1px solid var(--line2);text-align:center;padding:8px;font-size:11px;text-transform:uppercase}.statusItem{display:grid;grid-template-columns:20px 1fr;gap:8px;padding:7px 9px;font-size:10px;font-weight:800}.statusItem b{font-size:12px}.blankNote{border:2px solid var(--line2);border-radius:7px;height:198px}.sign{height:90px;border:2px solid var(--line2);border-radius:7px;margin-top:8px;display:grid;grid-template-columns:176px 1fr 1fr;align-items:center;text-align:center}.signIcon{display:flex;align-items:center;justify-content:flex-end;padding-right:16px}.signTitle{text-align:left;font-size:18px;font-weight:900;text-transform:uppercase}.signLine{border-top:2px solid #667990;margin:0 60px 6px}.signLabel{font-size:12px;font-weight:900;text-transform:uppercase}.footer{height:87px;background:var(--navy);color:#fff;margin:10px -8px 0;display:grid;grid-template-columns:138px 1fr 210px;align-items:center;position:relative;overflow:hidden}.cycleText{font-weight:800;font-size:13px;line-height:1.45;padding-left:16px;text-transform:uppercase}.steps{display:flex;align-items:center;gap:11px;height:100%;font-weight:900;text-transform:uppercase;font-size:11px}.stepNum{width:38px;height:38px;border-radius:50%;background:#fff;color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:26px}.arr{font-size:22px;font-weight:400}.tealEnd{height:100%;background:linear-gradient(110deg,var(--teal) 0 75%,#078b8b 75%);padding:20px 12px 0 20px;font-size:12px;font-weight:900;line-height:1.55;text-transform:uppercase}.targetSmall{position:absolute;right:18px;bottom:15px;width:43px;height:43px;border:3px solid #fff;border-radius:50%}.targetSmall:before{content:"";position:absolute;inset:9px;border:3px solid #fff;border-radius:50%}.targetSmall:after{content:"";position:absolute;right:-7px;top:-7px;width:16px;height:16px;border-top:3px solid #fff;border-right:3px solid #fff;transform:rotate(-7deg)}
+/* Page 2 */
+.p2 .header .titleBox .sub{color:var(--teal)}.notesGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;height:974px}.noteCard{border:2px solid var(--line2);border-radius:8px;overflow:hidden;background:#fff}.noteCard .sectionHead{padding:10px 12px 3px}.ruled{margin:8px 14px 10px;height:calc(100% - 68px);background:repeating-linear-gradient(to bottom, transparent 0, transparent 24px, #b5c0ce 25px, transparent 26px)}.noteCard.r1{height:246px}.noteCard.r2{height:249px}.noteCard.r3{height:249px}.noteCard.r4{height:176px}.bottom2{height:143px;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.obs,.resp{border:2px solid var(--line2);border-radius:8px;display:grid;grid-template-columns:50px 1fr;align-items:start;padding:15px 14px}.obsTitle,.respTitle{font-weight:900;text-transform:uppercase;font-size:17px}.obs .ruled{grid-column:1/3;margin:10px 6px 0;height:72px}.resp{grid-template-columns:50px 1fr}.respContent{display:grid;grid-template-columns:1fr 1fr;gap:30px;padding:28px 10px 0}.sig2{text-align:center}.sig2 .line{border-top:2px solid #667990;margin-bottom:7px}.sig2 .role{font-size:12px;font-weight:900}.sig2 .data{font-size:12px;font-weight:900;text-align:left;margin-top:28px}.footer2{height:104px;background:var(--navy);color:#fff;margin:10px -8px 0;display:grid;grid-template-columns:1fr 1fr 1fr 220px;align-items:center;position:relative;overflow:hidden}.footItem{height:100%;display:grid;grid-template-columns:76px 1fr;align-items:center;border-right:2px solid #ffffff66;padding-left:28px;font-weight:900;text-transform:uppercase;font-size:16px;line-height:1.25}.footItem svg{width:42px;height:42px;stroke:#fff}.footer2 .diagonal{position:absolute;right:160px;top:-20px;width:80px;height:145px;background:linear-gradient(100deg,transparent 0 30%,#068b93 30% 55%,#11b4b5 55% 76%,transparent 76%);transform:skewX(-8deg)}.dots{height:100%;background:var(--teal-dark);clip-path:polygon(25% 0,100% 0,100% 100%,0 100%);position:relative}.dots:before{content:"";position:absolute;right:28px;top:34px;width:124px;height:45px;background-image:radial-gradient(#fff 1.4px,transparent 1.5px);background-size:14px 14px;opacity:.85}
+[contenteditable="true"]:empty:before{content:""}.editable:focus,.fill:focus{box-shadow:0 0 0 2px #00a3ad55;border-radius:3px}.onlyprint{display:none}
+@media(max-width:1100px){body{padding:10px}.toolbar{max-width:100%;}.sheet{transform-origin:top center;max-width:100%;width:1024px}}
+@media print{body{padding:0;background:#fff}.toolbar{display:none}.sheet{box-shadow:none;margin:0;width:100vw;height:150vw;page-break-after:always}.sheet:last-child{page-break-after:auto}.no-img-badge{display:none}@page{margin:0;size:portrait} .fill{border-bottom-color:#61738b}}
+
+/* --- Correções de layout e responsividade --- */
+.header{grid-template-columns:340px 1fr 176px;height:173px;padding-left:12px;overflow:hidden}
+.mapa{font-size:100px;letter-spacing:6px;white-space:nowrap}
+.titleBox{height:134px;padding-left:24px;padding-top:8px;overflow:hidden}
+.titleBox .title{font-size:23px;line-height:1.16;letter-spacing:.01em;white-space:nowrap}
+.titleBox .sub{font-size:21px;line-height:1.12;margin-top:7px;white-space:nowrap}
+.titleBox .desc{font-size:14px;line-height:1.15;margin-top:7px;white-space:nowrap}
+.brand{height:173px}.brand .brandInner{margin-left:30px}.brand .bigA{font-size:58px}.brand .brandText{font-size:23px}
+.info{height:106px;margin:8px 0 10px;grid-template-columns:1.08fr 1fr 1.06fr}
+.infoCol{grid-template-columns:62px minmax(0,1fr);padding:0 12px}.infoText{font-size:13px}.lineRow{gap:7px;margin:12px 0;white-space:nowrap}.fill{min-width:142px}.fill.med{min-width:118px}.datefill{min-width:36px}.bim{gap:7px;white-space:nowrap}.boxcheck{width:14px;height:14px;margin-right:2px}
+.sectionHead{gap:10px;padding:9px 10px 7px}.sectionTitle{font-size:19px;line-height:1.12}.sectionSub{font-size:11px}.num{width:32px;height:36px;font-size:26px;flex:0 0 auto}.iconRound{width:52px;height:52px}.iconRound svg{width:31px;height:31px}
+.summaryGrid{gap:8px}.summaryCard{grid-template-columns:62px minmax(0,1fr);padding:12px 10px}.summaryCard .label{font-size:13px;line-height:1.28}.summaryCard .bigLine{min-width:64px}.summaryCard .paren{font-size:15px}
+.s2body{grid-template-columns:206px minmax(0,1fr);gap:8px}.donut{width:194px;height:194px}.donut:after{inset:54px}.legend{height:184px;margin-top:22px;padding:14px 11px;font-size:11px}.leg{gap:9px;margin:14px 0}.mini{font-size:11px;padding-top:12px}.discipline{font-size:12px}.discipline th{font-size:11px}.discipline td{height:31px;padding:0 10px}.scoreLine{width:68px}.evoRow{grid-template-columns:62px 1fr 110px}.evoText{font-size:12px}.evoText small{font-size:10px}.evoPct{font-size:17px}.variation{grid-template-columns:1fr 92px;font-size:14px}.varBox{height:60px}
+.engRow{grid-template-columns:42px 1fr 94px}.engText{font-size:12px}.engText small{font-size:10px}.smallInput{height:42px}.scale{font-size:12px}.ie{font-size:12px;grid-template-columns:1fr 96px}.riskDonut{width:168px;height:168px}.riskDonut:after{inset:48px}.riskBottom{padding:6px 8px}.riskCell{height:64px;font-size:11px;padding:10px 7px}.riskCell strong{font-size:30px}
+.alertBody{grid-template-columns:minmax(0,1fr) 118px;gap:7px;padding:0 8px 8px}.alertText{font-size:10.5px;line-height:1.22}.alertText ul{margin:3px 0 6px 14px}.status h4{padding:5px;font-size:10px}.statusItem{grid-template-columns:16px 1fr;gap:6px;padding:4px 7px;font-size:8.8px;line-height:1.18}.statusItem b{font-size:10px}.blankNote{height:188px}.dot{width:13px;height:13px}
+.sign{grid-template-columns:72px 178px 1fr 1fr;height:86px}.signIcon{justify-content:center;padding-right:0}.signTitle{font-size:17px}.signLine{margin:0 42px 6px}.signLabel{font-size:11px}
+.footer{height:87px;grid-template-columns:128px 1fr 176px}.cycleText{font-size:11px;padding-left:14px}.steps{gap:6px;font-size:9px;line-height:1.1}.stepNum{width:30px;height:30px;font-size:21px;flex:0 0 auto}.arr{font-size:17px}.tealEnd{font-size:9.5px;line-height:1.45;padding:16px 8px 0 12px}.targetSmall{width:35px;height:35px;right:10px;bottom:10px}
+/* Página 2 */
+.notesGrid{height:auto;grid-auto-rows:auto}.noteCard.r1{height:238px}.noteCard.r2{height:238px}.noteCard.r3{height:238px}.noteCard.r4{height:168px}.noteCard .sectionHead{padding:9px 10px 3px}.ruled{height:calc(100% - 62px);margin:8px 14px 9px;background:repeating-linear-gradient(to bottom, transparent 0, transparent 23px, #b5c0ce 24px, transparent 25px)}.bottom2{height:166px;margin-top:8px}.obs,.resp{padding:13px 14px}.obsTitle,.respTitle{font-size:16px}.obs .ruled{height:82px}.respContent{gap:30px;padding:22px 10px 0}.sig2 .data{margin-top:20px}.footer2{height:104px;margin-top:8px}.footItem{font-size:14px;padding-left:24px;grid-template-columns:64px 1fr}.footer2{grid-template-columns:1fr 1fr 1fr 206px}
+/* Mantém o tamanho-base da folha e escala visualmente em telas menores, sem espremer as colunas internas. */
+@media(max-width:1100px){body{padding:10px;overflow-x:hidden}.toolbar{max-width:100%}.sheet{width:1024px;max-width:none;transform:none;transform-origin:top center}}
+@media print{.header{grid-template-columns:340px 1fr 176px}.sheet{zoom:1!important;width:100vw;height:150vw}.toolbar{display:none!important}}
+
+
+/* --- Ajuste fino: cabeçalho sem corte e campos compactos --- */
+.header{grid-template-columns:318px 1fr 170px!important}
+.mapa{font-size:96px!important;letter-spacing:5px!important}
+.titleBox{padding-left:22px!important;height:132px!important}
+.titleBox .title{font-size:22px!important;line-height:1.15!important;white-space:nowrap!important;overflow:visible!important}
+.titleBox .sub{font-size:20px!important;line-height:1.12!important;white-space:nowrap!important}
+.titleBox .desc{font-size:13px!important;line-height:1.15!important;white-space:nowrap!important}
+.brand .brandInner{margin-left:26px!important}.brand .bigA{font-size:54px!important}.brand .brandText{font-size:21px!important}
+.summaryCard .pct{margin-top:2px!important;font-size:12px!important;line-height:1!important;white-space:nowrap!important;text-align:left!important}.summaryCard .pct .paren{font-size:13px!important}.summaryCard .pct .fill.small{min-width:50px!important;height:13px!important}
+@media print{.header{grid-template-columns:318px 1fr 170px!important}}
+
+/* ── Cards de resumo: valores centralizados, sem sublinhado ── */
+.summaryCard > div:last-child{text-align:center}
+.summaryCard .bigLine{border-bottom:none!important;font-size:26px!important;font-weight:900!important;color:var(--navy)!important;margin-top:6px!important;height:auto!important;min-width:auto!important;line-height:1.1!important}
+.summaryCard .pct{justify-content:center!important;margin-top:4px!important}
+.summaryCard .pct .fill.small{border-bottom:none!important;font-size:20px!important;font-weight:900!important;min-width:auto!important;height:auto!important;color:var(--navy)!important}
+.summaryCard .pct .paren{font-size:20px!important;font-weight:900!important}
+
+/* ── Escola e turma: texto completo, fonte compacta ─────── */
+.infoCol .fill:not(.med):not(.datefill){border-bottom:none!important;font-size:9px!important;font-weight:800!important;color:var(--navy)!important;white-space:normal!important;line-height:1.35!important;max-width:210px!important;display:inline-block!important;vertical-align:bottom!important;overflow:visible!important}
+
+/* ── Ano letivo e professor: linha mantida, texto maior e centralizado ── */
+.infoCol .fill.med{text-align:center!important;font-size:13px!important;font-weight:800!important;color:var(--navy)!important}
+
+/* ── Tabela de disciplinas: notas sem sublinhado ─────────── */
+.scoreLine{border-bottom:none!important;font-size:14px!important;font-weight:800!important;color:var(--navy)!important}
+
+/* ── Donut de distribuição: ocultar labels de % ─────────── */
+.donutLabel{display:none!important}
+
+/* ── Donut de risco: % menor para caber no centro ────────── */
+.riskDonut .inside b{font-size:16px!important;line-height:1.1!important}
+.riskDonut .inside span{font-size:9px!important;letter-spacing:.04em!important}
+
+/* ── Card alunos em risco: ocultar linha de percentual ───── */
+.summaryGrid .summaryCard:nth-child(4) .pct{display:none!important}
+
+/* ── Risco donut: "20%" menor na célula meta ─────────────── */
+.riskCell strong{font-size:20px!important}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute;left:-9999px;overflow:hidden" aria-hidden="true">
+  <symbol id="ico-school" viewBox="0 0 64 64"><path d="M10 54h44M16 54V23l16-9 16 9v31M25 54V38h14v16M23 26h18M28 31h8M12 54V31h8m32 23V31h-8M32 14V6m0 0h10"/></symbol>
+  <symbol id="ico-calendar" viewBox="0 0 64 64"><path d="M14 14h36a4 4 0 0 1 4 4v34a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4V18a4 4 0 0 1 4-4zM10 25h44M22 8v12M42 8v12M21 35h6M32 35h6M43 35h6M21 45h6M32 45h6"/></symbol>
+  <symbol id="ico-teacher" viewBox="0 0 64 64"><circle cx="32" cy="18" r="9"/><path d="M19 55v-9a13 13 0 0 1 26 0v9M18 35l-6 12m34-12 6 12M28 38l4 6 4-6"/></symbol>
+  <symbol id="ico-users" viewBox="0 0 64 64"><circle cx="32" cy="22" r="9"/><path d="M18 55v-5a14 14 0 0 1 28 0v5M17 28a7 7 0 1 1 2-13M47 15a7 7 0 1 1 2 13M7 51v-3a11 11 0 0 1 13-11M57 51v-3a11 11 0 0 0-13-11"/></symbol>
+  <symbol id="ico-star" viewBox="0 0 64 64"><path d="M32 8l7 15 16 2-12 12 3 17-14-8-14 8 3-17L9 25l16-2z"/></symbol>
+  <symbol id="ico-chart" viewBox="0 0 64 64"><path d="M12 53h42M17 47V31h9v16M30 47V20h9v27M43 47V12h9v35M15 25l12-11 9 9 16-17"/></symbol>
+  <symbol id="ico-alert" viewBox="0 0 64 64"><path d="M32 8l26 46H6zM32 24v14M32 47h.1"/></symbol>
+  <symbol id="ico-target" viewBox="0 0 64 64"><circle cx="30" cy="34" r="22"/><circle cx="30" cy="34" r="13"/><circle cx="30" cy="34" r="4"/><path d="M45 19l9-9M48 10h6v6"/></symbol>
+  <symbol id="ico-wifi" viewBox="0 0 64 64"><path d="M12 28a31 31 0 0 1 40 0M20 37a19 19 0 0 1 24 0M28 46a7 7 0 0 1 8 0M32 52h.1"/></symbol>
+  <symbol id="ico-clip" viewBox="0 0 64 64"><path d="M22 14h18l8 8v28a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4V18a4 4 0 0 1 4-4h2M39 14v10h10M25 34h14M25 42h14"/></symbol>
+  <symbol id="ico-note" viewBox="0 0 64 64"><path d="M14 14h36v30H26L14 54V14zM23 26h18M23 35h12"/></symbol>
+  <symbol id="ico-lock" viewBox="0 0 64 64"><rect x="16" y="26" width="32" height="26" rx="3"/><path d="M24 26v-8a8 8 0 0 1 16 0v8M32 36v8"/></symbol>
+</svg>
+<div class="toolbar"><button onclick="window.print()">Imprimir / salvar em PDF</button><button class="secondary" onclick="clearSaved()">Limpar campos</button></div>
+
+<section class="sheet" id="page1">
+  <div class="page p1">
+    <header class="header">
+      <div class="mapa">MAPA</div>
+      <div class="titleBox"><div class="title">Monitoramento e Acompanhamento<br>Pedagógico da Aprendizagem</div><div class="sub">Indicadores da Turma</div><div class="desc">Dados que orientam. Indicadores que transformam.</div></div>
+      <div class="brand"><div class="brandInner"><div class="bigA">A</div><div class="brandText">Educação<br>Adventista</div></div></div>
+    </header>
+    <div class="info">
+      <div class="infoCol"><div class="iconRound"><svg><use href="#ico-school"/></svg></div><div class="infoText"><div class="lineRow">Escola:<span class="fill editable" contenteditable="true" data-key="p1-escola"></span></div><div class="lineRow">Turma:<span class="fill editable" contenteditable="true" data-key="p1-turma"></span></div></div></div>
+      <div class="infoCol"><div class="iconRound"><svg><use href="#ico-calendar"/></svg></div><div class="infoText"><div class="lineRow">Ano letivo:<span class="fill med editable" contenteditable="true" data-key="p1-ano"></span></div><div class="bim">Bimestre: <span><span class="boxcheck"></span>1º</span><span><span class="boxcheck"></span>2º</span><span><span class="boxcheck"></span>3º</span><span><span class="boxcheck"></span>4º</span></div></div></div>
+      <div class="infoCol"><div class="iconRound"><svg><use href="#ico-teacher"/></svg></div><div class="infoText"><div class="lineRow">Professor(a):<span class="fill med editable" contenteditable="true" data-key="p1-prof"></span></div><div class="lineRow">Data:<span class="fill datefill editable" contenteditable="true" data-key="p1-d1"></span>/<span class="fill datefill editable" contenteditable="true" data-key="p1-d2"></span>/<span class="fill datefill editable" contenteditable="true" data-key="p1-d3"></span></div></div></div>
+    </div>
+
+    <main class="content">
+      <section class="card s1">
+        <div class="sectionHead"><div class="num">1</div><div><div class="sectionTitle">Resumo geral da turma</div><div class="sectionSub">Visão geral dos principais indicadores da turma</div></div></div>
+        <div class="summaryGrid">
+          <div class="summaryCard"><div class="iconRound"><svg><use href="#ico-users"/></svg></div><div><div class="label">Total de alunos</div><div class="bigLine editable" contenteditable="true" data-key="total-alunos"></div></div></div>
+          <div class="summaryCard"><div class="iconRound green"><svg><use href="#ico-star"/></svg></div><div><div class="label">Média geral<br>da turma</div><div class="bigLine editable" contenteditable="true" data-key="media-geral"></div></div></div>
+          <div class="summaryCard"><div class="iconRound teal"><svg><use href="#ico-chart"/></svg></div><div><div class="label">Índice de aprendizagem<br>da turma (IAT)<br><span style="font-weight:800;text-transform:none">0 a 10</span></div><div class="bigLine editable" contenteditable="true" data-key="iat"></div></div></div>
+          <div class="summaryCard"><div class="iconRound blue"><svg><use href="#ico-alert"/></svg></div><div><div class="label">Alunos em risco<br><span style="font-weight:800;text-transform:none">(% e quantidade)</span></div><div class="bigLine editable" contenteditable="true" data-key="risco-qtd"></div><div class="pct"><span class="paren">(</span><span class="fill small editable" contenteditable="true" data-key="risco-pct"></span> %<span class="paren">)</span></div></div></div>
+          <div class="summaryCard"><div class="iconRound green"><svg><use href="#ico-target"/></svg></div><div><div class="label">Meta da turma<br>(média geral)</div><div class="bigLine editable" contenteditable="true" data-key="meta"></div></div></div>
+        </div>
+      </section>
+      <div class="row2">
+        <section class="card s2">
+          <div class="sectionHead"><div class="num">2</div><div><div class="sectionTitle">Distribuição por nível de aprendizagem</div><div class="sectionSub">Percentual de alunos por nível</div></div></div>
+          <div class="s2body">
+            <div class="donut"><span class="donutLabel d1">__%</span><span class="donutLabel d2">__%</span><span class="donutLabel d3">__%</span><span class="donutLabel d4">__%</span></div>
+            <div class="legend"><div class="leg"><span class="dot" style="background:var(--teal-dark)"></span>AVANÇADO (8,0 a 10)</div><div class="leg"><span class="dot" style="background:var(--blue)"></span>ADEQUADO (6,0 a 7,9)</div><div class="leg"><span class="dot" style="background:var(--orange)"></span>BÁSICO (4,0 a 5,9)</div><div class="leg"><span class="dot" style="background:var(--red)"></span>CRÍTICO (0 a 3,9)</div></div>
+            <div class="miniGrid"><div class="mini" style="color:var(--teal-dark)">Avançado<div class="u editable" contenteditable="true" data-key="avancado">____%</div><div class="u editable" contenteditable="true" data-key="avancado-q">______</div></div><div class="mini" style="color:var(--blue)">Adequado<div class="u editable" contenteditable="true" data-key="adequado">____%</div><div class="u editable" contenteditable="true" data-key="adequado-q">______</div></div><div class="mini" style="color:var(--orange)">Básico<div class="u editable" contenteditable="true" data-key="basico">____%</div><div class="u editable" contenteditable="true" data-key="basico-q">______</div></div><div class="mini" style="color:var(--red)">Crítico<div class="u editable" contenteditable="true" data-key="critico">____%</div><div class="u editable" contenteditable="true" data-key="critico-q">______</div></div></div>
+          </div>
+        </section>
+        <section class="card s3">
+          <div class="sectionHead"><div class="num">3</div><div><div class="sectionTitle">Desempenho por disciplina</div><div class="sectionSub">Média da turma por disciplina</div></div></div>
+          <div class="tableWrap"><table class="discipline"><thead><tr><th>DISCIPLINA</th><th>MÉDIA DA TURMA<br>(0 a 10)</th></tr></thead><tbody>
+            <tr><td>LÍNGUA PORTUGUESA</td><td><span class="scoreLine editable" contenteditable="true" data-key="lp"></span></td></tr>
+            <tr><td>MATEMÁTICA</td><td><span class="scoreLine editable" contenteditable="true" data-key="mat"></span></td></tr>
+            <tr><td>CIÊNCIAS</td><td><span class="scoreLine editable" contenteditable="true" data-key="cie"></span></td></tr>
+            <tr><td>HISTÓRIA</td><td><span class="scoreLine editable" contenteditable="true" data-key="his"></span></td></tr>
+            <tr><td>GEOGRAFIA</td><td><span class="scoreLine editable" contenteditable="true" data-key="geo"></span></td></tr>
+            <tr><td>INGLÊS</td><td><span class="scoreLine editable" contenteditable="true" data-key="ing"></span></td></tr>
+            <tr><td>EDUCAÇÃO FÍSICA</td><td><span class="scoreLine editable" contenteditable="true" data-key="ef"></span></td></tr>
+            <tr><td>ENSINO RELIGIOSO</td><td><span class="scoreLine editable" contenteditable="true" data-key="er"></span></td></tr>
+            <tr><td>ARTES</td><td><span class="scoreLine editable" contenteditable="true" data-key="artes"></span></td></tr>
+          </tbody></table></div>
+        </section>
+        <section class="card s4">
+          <div class="sectionHead"><div class="num">4</div><div><div class="sectionTitle">Evolução da turma</div><div class="sectionSub">Comparação com o bimestre anterior</div></div></div>
+          <div class="evolution"><div class="evoTable">
+            <div class="evoRow"><div class="iconRound green" style="margin:auto;width:50px;height:50px"><span class="arrow">↑</span></div><div class="evoText">Crescimento<br><small>(+0,5 ou mais pontos)</small></div><div class="evoPct"><span class="fill small editable" contenteditable="true" data-key="cres"></span>%</div></div>
+            <div class="evoRow"><div class="iconRound blue" style="margin:auto;width:50px;height:50px"><span class="equal">=</span></div><div class="evoText">Estabilidade<br><small>(-0,4 a +0,4 pontos)</small></div><div class="evoPct"><span class="fill small editable" contenteditable="true" data-key="estab"></span>%</div></div>
+            <div class="evoRow"><div class="iconRound red" style="margin:auto;width:50px;height:50px"><span class="arrow">↓</span></div><div class="evoText">Queda<br><small>(-0,5 ou mais pontos)</small></div><div class="evoPct"><span class="fill small editable" contenteditable="true" data-key="queda"></span>%</div></div>
+          </div><div class="variation"><div>Variação da média geral<small>(em pontos)</small></div><div class="varBox editable" contenteditable="true" data-key="variacao">______</div></div></div>
+        </section>
+      </div>
+      <div class="row3">
+        <section class="card s5">
+          <div class="sectionHead"><div class="num">5</div><div><div class="sectionTitle">Engajamento coletivo</div><div class="sectionSub">Indicadores de participação e comprometimento</div></div></div>
+          <div class="engage"><div class="engRow"><div class="iconRound teal" style="width:39px;height:39px"><svg style="width:27px"><use href="#ico-wifi"/></svg></div><div class="engText">Frequência média da turma<br><small>(%)</small></div><div class="smallInput"><span class="fill small editable" contenteditable="true" data-key="freq"></span>%</div></div>
+          <div class="engRow"><div class="iconRound blue" style="width:39px;height:39px"><svg style="width:25px"><use href="#ico-clip"/></svg></div><div class="engText">Entrega de atividades<br><small>(%)</small></div><div class="smallInput"><span class="fill small editable" contenteditable="true" data-key="ativ"></span>%</div></div>
+          <div class="engRow"><div class="iconRound orange" style="width:39px;height:39px"><svg style="width:25px"><use href="#ico-star"/></svg></div><div class="engText">Participação média<br><small>(Escala: Alta, Média, Baixa)</small></div><div class="smallInput editable" contenteditable="true" data-key="part"></div></div>
+          <div class="scale">ALTO = 3 &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; MÉDIO = 2 &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; BAIXO = 1</div><div class="ie"><div>Índice de engajamento (IE)<br><span style="text-transform:none">(0 a 3)</span></div><div class="editable" contenteditable="true" data-key="ie">________</div></div></div>
+        </section>
+        <section class="card s6"><div class="sectionHead"><div class="num">6</div><div><div class="sectionTitle">Taxa de alunos em risco</div><div class="sectionSub">Critério: média &lt; 6,0 ou baixo engajamento</div></div></div><div class="riskBody"><div class="riskDonut"><div class="inside"><b class="editable" contenteditable="true" data-key="taxa-risco">__%</b><span>EM RISCO</span></div></div></div><div class="riskBottom"><div class="riskCell">Quantidade de<br>alunos em risco<br><span class="editable" contenteditable="true" data-key="qtd-risco">______</span></div><div class="riskCell">Meta (máximo)<br><strong>20%</strong></div></div></section>
+        <section class="card s7"><div class="sectionHead"><div class="num">7</div><div><div class="sectionTitle">Indicador de alerta pedagógico</div><div class="sectionSub">Auxilia na necessidade de intervenção oportuna</div></div></div><div class="alertBody"><div class="alertText"><p>O alerta será ativado quando:</p><ul><li>Mais de 30% da turma estiver em nível básico ou crítico.</li><li>Ou média geral da turma for inferior a 6,0.</li></ul><div class="status"><h4>Situação da turma<br><span style="text-transform:none">(Selecione)</span></h4><div class="statusItem"><span class="dot" style="background:var(--green)"></span><span><b>NORMAL</b><br>Desempenho dentro dos parâmetros.</span></div><div class="statusItem"><span class="dot" style="background:var(--orange)"></span><span><b>ATENÇÃO</b><br>Monitorar e planejar intervenções.</span></div><div class="statusItem"><span class="dot" style="background:var(--red)"></span><span><b>ALERTA</b><br>Intervenção pedagógica prioritária.</span></div></div></div><div class="blankNote editable" contenteditable="true" data-key="alerta-note"></div></div></section>
+      </div>
+    </main>
+    <div class="sign"><div class="signIcon"><svg width="44" height="44" viewBox="0 0 64 64" stroke="var(--navy)" fill="none" stroke-width="2"><use href="#ico-note"/></svg></div><div class="signTitle">Responsáveis</div><div><div class="signLine"></div><div class="signLabel">Professor(a)</div></div><div><div class="signLine"></div><div class="signLabel">Coordenação Pedagógica</div></div></div>
+    <footer class="footer"><div class="cycleText">Ciclo do MAPA<br>como funciona:</div><div class="steps"><span class="arr">→</span><span class="stepNum">1</span><span>Coleta de dados<br><small>(registro da turma)</small></span><span class="arr">→</span><span class="stepNum">2</span><span>Análise dos<br>indicadores</span><span class="arr">→</span><span class="stepNum">3</span><span>Tomada de<br>decisão</span><span class="arr">→</span><span class="stepNum">4</span><span>Execução das<br>ações</span><span class="arr">→</span><span class="stepNum">5</span><span>Monitoramento<br>e reavaliação</span></div><div class="tealEnd">Planejar com dados,<br>agir com estratégia,<br>transformar resultados.<div class="targetSmall"></div></div><div class="no-img-badge">100% HTML/CSS - sem imagens</div></footer>
+  </div>
+</section>
+
+<section class="sheet" id="page2">
+  <div class="page p2">
+    <header class="header"><div class="mapa">MAPA</div><div class="titleBox"><div class="title">Monitoramento e Acompanhamento<br>Pedagógico da Aprendizagem</div><div class="sub">Observações e Orientações</div></div><div class="brand"><div class="brandInner"><div class="bigA">A</div><div class="brandText">Educação<br>Adventista</div></div></div></header>
+    <div class="info">
+      <div class="infoCol"><div class="iconRound"><svg><use href="#ico-school"/></svg></div><div class="infoText"><div class="lineRow">Escola:<span class="fill editable" contenteditable="true" data-key="p2-escola"></span></div><div class="lineRow">Turma:<span class="fill editable" contenteditable="true" data-key="p2-turma"></span></div></div></div>
+      <div class="infoCol"><div class="iconRound"><svg><use href="#ico-calendar"/></svg></div><div class="infoText"><div class="lineRow">Ano letivo:<span class="fill med editable" contenteditable="true" data-key="p2-ano"></span></div><div class="bim">Bimestre: <span><span class="boxcheck"></span>1º</span><span><span class="boxcheck"></span>2º</span><span><span class="boxcheck"></span>3º</span><span><span class="boxcheck"></span>4º</span></div></div></div>
+      <div class="infoCol"><div class="iconRound"><svg><use href="#ico-teacher"/></svg></div><div class="infoText"><div class="lineRow">Professor(a):<span class="fill med editable" contenteditable="true" data-key="p2-prof"></span></div><div class="lineRow">Data:<span class="fill datefill editable" contenteditable="true" data-key="p2-d1"></span>/<span class="fill datefill editable" contenteditable="true" data-key="p2-d2"></span>/<span class="fill datefill editable" contenteditable="true" data-key="p2-d3"></span></div></div></div>
+    </div>
+    <main class="notesGrid">
+      <section class="noteCard r1"><div class="sectionHead"><div class="num">1</div><div><div class="sectionTitle">Resumo geral da turma</div><div class="sectionSub">Observações e orientações</div></div></div><div class="ruled editable" contenteditable="true" data-key="obs1"></div></section>
+      <section class="noteCard r1"><div class="sectionHead"><div class="num">2</div><div><div class="sectionTitle">Distribuição por nível de aprendizagem</div><div class="sectionSub">Observações e orientações</div></div></div><div class="ruled editable" contenteditable="true" data-key="obs2"></div></section>
+      <section class="noteCard r2"><div class="sectionHead"><div class="num">3</div><div><div class="sectionTitle">Desempenho por disciplina</div><div class="sectionSub">Observações e orientações</div></div></div><div class="ruled editable" contenteditable="true" data-key="obs3"></div></section>
+      <section class="noteCard r2"><div class="sectionHead"><div class="num">4</div><div><div class="sectionTitle">Evolução da turma</div><div class="sectionSub">Observações e orientações</div></div></div><div class="ruled editable" contenteditable="true" data-key="obs4"></div></section>
+      <section class="noteCard r3"><div class="sectionHead"><div class="num">5</div><div><div class="sectionTitle">Engajamento coletivo</div><div class="sectionSub">Observações e orientações</div></div></div><div class="ruled editable" contenteditable="true" data-key="obs5"></div></section>
+      <section class="noteCard r3"><div class="sectionHead"><div class="num">6</div><div><div class="sectionTitle">Taxa de alunos em risco</div><div class="sectionSub">Observações e orientações</div></div></div><div class="ruled editable" contenteditable="true" data-key="obs6"></div></section>
+      <section class="noteCard r4"><div class="sectionHead"><div class="num">7</div><div><div class="sectionTitle">Indicador de alerta pedagógico</div><div class="sectionSub">Observações e orientações</div></div></div><div class="ruled editable" contenteditable="true" data-key="obs7"></div></section>
+      <section class="noteCard r4"><div class="sectionHead"><div class="num">8</div><div><div class="sectionTitle">Plano de ação e intervenção</div><div class="sectionSub">Observações e orientações</div></div></div><div class="ruled editable" contenteditable="true" data-key="obs8"></div></section>
+    </main>
+    <div class="bottom2"><section class="obs"><div><svg width="34" height="34" viewBox="0 0 64 64" stroke="var(--navy)" fill="none" stroke-width="2"><use href="#ico-note"/></svg></div><div class="obsTitle">Observações gerais</div><div class="ruled editable" contenteditable="true" data-key="obsgeral"></div></section><section class="resp"><div><svg width="34" height="34" viewBox="0 0 64 64" stroke="var(--navy)" fill="none" stroke-width="2"><use href="#ico-lock"/></svg></div><div class="respTitle">Responsáveis</div><div class="respContent"><div class="sig2"><div class="line"></div><div class="role">PROFESSOR(A)</div><div class="data">DATA: ____/____/______</div></div><div class="sig2"><div class="line"></div><div class="role">COORDENAÇÃO PEDAGÓGICA</div><div class="data">DATA: ____/____/______</div></div></div></section></div>
+    <footer class="footer2"><div class="footItem"><svg viewBox="0 0 64 64" fill="none" stroke-width="2"><use href="#ico-target"/></svg><div>Analisar<br>para entender</div></div><div class="footItem"><svg viewBox="0 0 64 64" fill="none" stroke-width="2"><use href="#ico-chart"/></svg><div>Indicadores<br>para decidir</div></div><div class="footItem"><svg viewBox="0 0 64 64" fill="none" stroke-width="2"><use href="#ico-users"/></svg><div>Ações<br>para transformar</div></div><div class="diagonal"></div><div class="dots"></div><div class="no-img-badge">100% HTML/CSS - sem imagens</div></footer>
+  </div>
+</section>
+<script>
+
+function ajustarZoomMapa(){
+  if (window.matchMedia && window.matchMedia('print').matches) return;
+  const escala = Math.min(1, Math.max(0.62, (window.innerWidth - 20) / 1024));
+  document.querySelectorAll('.sheet').forEach(folha => { folha.style.zoom = escala; });
+}
+window.addEventListener('resize', ajustarZoomMapa);
+window.addEventListener('beforeprint', () => document.querySelectorAll('.sheet').forEach(folha => { folha.style.zoom = 1; }));
+window.addEventListener('afterprint', ajustarZoomMapa);
+ajustarZoomMapa();
+const STORE='mapa-puro-html-v1';
+function key(el){return el.dataset.key || null}
+function allEditables(){return Array.from(document.querySelectorAll('[data-key]'))}
+function save(){const data={}; allEditables().forEach(el=>data[key(el)]=el.innerHTML); localStorage.setItem(STORE,JSON.stringify(data));}
+function load(){try{const data=JSON.parse(localStorage.getItem(STORE)||'{}'); allEditables().forEach(el=>{if(data[key(el)]!==undefined) el.innerHTML=data[key(el)];});}catch(e){}}
+function clearSaved(){if(confirm('Limpar todos os campos salvos?')){localStorage.removeItem(STORE); allEditables().forEach(el=>el.innerHTML='');}}
+allEditables().forEach(el=>el.addEventListener('input',save));
+load();
+</script>
+
+<script>
+(function() {
+  /* ── Preenche todos os campos data-key ───────────────────── */
+  var D = {"p1-escola": "Escola Adventista de Araçariguama", "p1-turma": "Ensino Fundamental - 1º Ano - Manhã - A", "p1-ano": "2026", "p1-prof": "Maynara", "p1-d1": "22", "p1-d2": "06", "p1-d3": "2026", "p2-escola": "Escola Adventista de Araçariguama", "p2-turma": "Ensino Fundamental - 1º Ano - Manhã - A", "p2-ano": "2026", "p2-prof": "Maynara", "p2-d1": "22", "p2-d2": "06", "p2-d3": "2026", "total-alunos": "20", "media-geral": "8,9", "iat": "10,0", "risco-qtd": "1", "risco-pct": "5,0", "meta": "9,4", "avancado": "90,0%", "avancado-q": "18", "adequado": "10,0%", "adequado-q": "2", "basico": "0,0%", "basico-q": "0", "critico": "0,0%", "critico-q": "0", "lp": "8,6", "mat": "8,8", "cie": "9,5", "his": "8,8", "geo": "9,0", "ing": "8,7", "ef": "10,0", "er": "9,0", "artes": "8,1", "cres": "-", "estab": "-", "queda": "-", "variacao": "-", "freq": "-", "ativ": "-", "part": "-", "ie": "-", "taxa-risco": "5,0%", "qtd-risco": "1", "alerta-note": "<div style=\"background:#eafaf1;border:2px solid #208a35;border-radius:5px;padding:14px 12px;height:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Arial,sans-serif\"><p style=\"margin:0 0 8px;font-weight:900;font-size:20px;color:#1d6a3b;text-transform:uppercase;letter-spacing:.06em;text-align:center\">NORMAL</p><p style=\"margin:0 0 6px;font-size:13px;font-weight:700;color:#1d6a3b;text-align:center\">1 aluno(s) com nota abaixo de 6,0</p><p style=\"margin:0;font-size:11px;color:#1d6a3b;text-align:center;font-weight:600\"></p></div>"};
+  document.querySelectorAll('[data-key]').forEach(function(el) {
+    var v = D[el.dataset.key];
+    if (v !== undefined) el.innerHTML = v;
+  });
+
+
+  /* ── Escola e turma: alinhamento (estilo via CSS) ────────── */
+  ['p1-escola','p2-escola','p1-turma','p2-turma'].forEach(function(k) {
+    var el = document.querySelector('[data-key="' + k + '"]');
+    if (el) {
+      el.style.display       = 'inline-block';
+      el.style.verticalAlign = 'bottom';
+    }
+  });
+
+  /* ── Marca o bimestre em CADA grupo .bim separadamente ───── */
+  var bimIdx = 0;
+  if (bimIdx >= 0) {
+    document.querySelectorAll('.bim').forEach(function(group) {
+      var checks = group.querySelectorAll('.boxcheck');
+      if (checks[bimIdx]) {
+        checks[bimIdx].style.background = '#002a5c';
+        checks[bimIdx].style.border     = '2px solid #002a5c';
+      }
+    });
+  }
+
+  /* ── Atualiza donut de distribuição por nível ────────────── */
+  var a=90.0, aq=10.0, b=0.0, c=0.0;
+  var s2 = a + aq, s3 = a + aq + b;
+  document.querySelectorAll('.donut').forEach(function(donut) {
+    donut.style.background =
+      'conic-gradient(var(--teal-dark) 0 ' + a + '%, var(--blue) ' + a + '% ' + s2 + '%, ' +
+      'var(--orange) ' + s2 + '% ' + s3 + '%, var(--red) ' + s3 + '% 100%)';
+  });
+  /* ── Atualiza donut de risco ─────────────────────────────── */
+  var rp = 5.0;
+  document.querySelectorAll('.riskDonut').forEach(function(rd) {
+    rd.style.background =
+      'conic-gradient(var(--red) 0 ' + rp + '%, #dce0e6 ' + rp + '% 100%)';
+  });
+
+  /* ── Destaca status de alerta (lista lateral + borda do campo) */
+  var alertStatus = 'NORMAL';
+  var alertColor  = '#208a35';
+  var statusMap = { 'NORMAL': 0, 'ATENÇÃO': 1, 'ALERTA': 2 };
+  var idx = statusMap[alertStatus];
+  var statusItems = document.querySelectorAll('.statusItem');
+  statusItems.forEach(function(el, i) {
+    if (i === idx) {
+      el.style.background = idx === 0 ? '#eafaf1' : idx === 1 ? '#fff8e1' : '#fdecea';
+      el.style.borderRadius = '4px';
+      el.style.fontWeight = '900';
+      el.style.border = '1px solid ' + alertColor;
+    }
+  });
+
+  /* Borda colorida no campo de alerta */
+  var alertNote = document.querySelector('[data-key="alerta-note"]');
+  if (alertNote) {
+    alertNote.style.border = '2px solid ' + alertColor;
+    alertNote.style.borderRadius = '7px';
+    alertNote.style.overflow = 'hidden';
+  }
+
+  /* ── Destaca linha dominante de evolução ─────────────────── */
+  var evoDom = '';
+  var evoMap = {cres: 0, estab: 1, queda: 2};
+  var evoBg  = {cres: '#eafaf1', estab: '#ebf5fb', queda: '#fdecea'};
+  if (evoDom && evoMap[evoDom] !== undefined) {
+    var evoRows = document.querySelectorAll('.evoRow');
+    if (evoRows[evoMap[evoDom]]) {
+      evoRows[evoMap[evoDom]].style.background    = evoBg[evoDom];
+      evoRows[evoMap[evoDom]].style.borderRadius  = '4px';
+    }
+  }
+
+  /* ── Salva no localStorage para persistir ────────────────── */
+  if (typeof save === 'function') save();
+})();
+</script>
+
+</body>
+</html>
