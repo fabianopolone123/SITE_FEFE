@@ -791,7 +791,20 @@ _pending_lock = threading.Lock()
 
 
 def _find_chrome():
+    from django.conf import settings as dj_settings
+    env_path = getattr(dj_settings, 'CHROME_PATH', '')
+    if env_path and os.path.exists(env_path):
+        return env_path
+
     candidates = [
+        # Linux
+        '/usr/bin/google-chrome-stable',
+        '/usr/bin/google-chrome',
+        '/usr/bin/chromium-browser',
+        '/usr/bin/chromium',
+        '/snap/bin/chromium',
+        '/usr/local/bin/chromium',
+        # Windows
         r'C:\Program Files\Google\Chrome\Application\chrome.exe',
         r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
         r'C:\Program Files\Microsoft\Edge\Application\msedge.exe',

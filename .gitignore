@@ -15,6 +15,9 @@ media/
 staticfiles/
 *.log
 
+# Variáveis de ambiente (nunca subir)
+.env
+
 # PDFs enviados (dados de alunos — não subir)
 *.pdf
 
