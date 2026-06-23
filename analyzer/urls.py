@@ -3,6 +3,9 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('historico/', views.history, name='history'),
+    path('historico/<int:report_id>/gerar/', views.generate_from_history, name='generate_from_history'),
+    path('historico/<int:report_id>/detalhes/', views.history_details, name='history_details'),
     path('export-pdf/', views.export_pdf, name='export_pdf'),
     path('temp-report/<str:report_id>/', views.serve_temp_report, name='serve_temp_report'),
 ]

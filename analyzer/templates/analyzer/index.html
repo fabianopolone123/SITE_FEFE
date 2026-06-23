@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MAPA — Monitoramento de Aprendizagem</title>
+  <title>MAPA &mdash; Monitoramento de Aprendizagem</title>
   <style>
     :root {
       --blue-dark:  #1a3a5c;
@@ -31,7 +31,7 @@
       min-height: 100vh;
     }
 
-    /* ── Header ─────────────────────────────────────────────────────── */
+    /* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     header {
       background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
       color: white;
@@ -61,14 +61,14 @@
       opacity: .8;
     }
 
-    /* ── Layout ─────────────────────────────────────────────────────── */
+    /* â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     main {
       max-width: 760px;
       margin: 0 auto;
       padding: 2rem 1.25rem 4rem;
     }
 
-    /* ── Card ───────────────────────────────────────────────────────── */
+    /* â”€â”€ Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .card {
       background: var(--white);
       border-radius: var(--radius);
@@ -93,7 +93,7 @@
       margin-left: .5rem;
     }
 
-    /* ── Drag-and-drop zone ─────────────────────────────────────────── */
+    /* â”€â”€ Drag-and-drop zone â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .drop-zone {
       border: 2px dashed var(--border);
       border-radius: var(--radius);
@@ -133,7 +133,7 @@
       display: none;
     }
 
-    /* ── Bimestre selector ──────────────────────────────────────────── */
+    /* â”€â”€ Bimestre selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .bimester-grid {
       display: flex;
       gap: .6rem;
@@ -144,6 +144,10 @@
       position: relative;
       flex: 1;
       min-width: 100px;
+    }
+    .bimester-opt.auto {
+      flex: 1.8;
+      min-width: 170px;
     }
     .bimester-opt input[type="radio"] {
       position: absolute;
@@ -157,9 +161,16 @@
       border-radius: 8px;
       text-align: center;
       font-size: .85rem;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
       cursor: pointer;
       transition: border-color .15s, background .15s, color .15s;
       user-select: none;
+    }
+    .bimester-opt.auto label {
+      font-size: .8rem;
+      padding-left: .45rem;
+      padding-right: .45rem;
     }
     .bimester-opt input:checked + label {
       border-color: var(--blue-light);
@@ -172,10 +183,10 @@
       background: #ebf5fb;
     }
 
-    /* ── Separator ──────────────────────────────────────────────────── */
+    /* â”€â”€ Separator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .sep { margin: 1.5rem 0; border: none; border-top: 1px solid var(--border); }
 
-    /* ── Button ─────────────────────────────────────────────────────── */
+    /* â”€â”€ Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .btn-generate {
       width: 100%;
       padding: .9rem;
@@ -197,7 +208,7 @@
     .btn-generate:active { transform: scale(.99); }
     .btn-generate:disabled { opacity: .5; cursor: not-allowed; }
 
-    /* ── Alert ──────────────────────────────────────────────────────── */
+    /* â”€â”€ Alert â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .alert {
       border-radius: 8px;
       padding: .9rem 1rem;
@@ -213,7 +224,7 @@
       color: #922b21;
     }
 
-    /* ── Critérios pill ─────────────────────────────────────────────── */
+    /* â”€â”€ CritÃ©rios pill â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .criteria-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -232,7 +243,7 @@
     .criterion.red    { background: #fdedec; border-color: var(--red);    color: #922b21; }
     .criterion strong { display: block; font-size: .88rem; margin-bottom: .15rem; }
 
-    /* ── Spinner ────────────────────────────────────────────────────── */
+    /* â”€â”€ Spinner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .spinner {
       display: none;
       width: 18px; height: 18px;
@@ -243,12 +254,75 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Footer ─────────────────────────────────────────────────────── */
+    .processing-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      place-items: center;
+      background: rgba(240,244,248,.94);
+      padding: 1.5rem;
+    }
+    .processing-box {
+      width: min(420px, 100%);
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 1.6rem;
+      text-align: center;
+    }
+    .processing-ring {
+      width: 38px;
+      height: 38px;
+      margin: 0 auto 1rem;
+      border: 4px solid #dbe7f4;
+      border-top-color: var(--blue-mid);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    .processing-box strong {
+      display: block;
+      color: var(--blue-dark);
+      font-size: 1.05rem;
+      margin-bottom: .35rem;
+    }
+    .processing-box span {
+      color: var(--muted);
+      font-size: .88rem;
+      line-height: 1.4;
+    }
+
+    /* â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     footer {
       text-align: center;
       padding: 1.5rem;
       font-size: .78rem;
       color: var(--muted);
+    }
+    .history-link {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+    .btn-history {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .45rem;
+      background: var(--white);
+      color: var(--blue-dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .65rem 1rem;
+      font-weight: 800;
+      font-size: .88rem;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    .btn-history:hover {
+      border-color: var(--blue-light);
+      color: var(--blue-mid);
     }
   </style>
 </head>
@@ -257,38 +331,40 @@
 <header>
   <div class="badge">Sistema Escolar Adventista</div>
   <h1>MAPA</h1>
-  <p>Monitoramento de Aprendizagem Pedagógica Anual</p>
+  <p>Monitoramento de Aprendizagem Pedag&oacute;gica Anual</p>
 </header>
 
 <main>
 
+  <div class="history-link">
+    <a class="btn-history" href="{% url 'history' %}">&#128452; Ver relat&oacute;rios gravados</a>
+  </div>
+
   {% if error %}
   <div class="alert alert-error">
-    <span>⚠️</span>
+    <span>&#9888;&#65039;</span>
     <div>{{ error }}</div>
   </div>
   {% endif %}
 
   <div class="card">
-    <div class="card-title">📄 Gerar Relatório</div>
+    <div class="card-title">&#128196; Gerar Relat&oacute;rio</div>
 
     <form method="post" enctype="multipart/form-data" id="uploadForm">
       {% csrf_token %}
 
-      <!-- Drop zone -->
       <div class="drop-zone" id="dropZone">
         <input type="file" name="pdf_file" id="pdfFile" accept=".pdf" multiple required>
-        <span class="drop-icon">📋</span>
+        <span class="drop-icon">&#128203;</span>
         <p class="drop-label">
           <strong>Clique ou arraste</strong> os PDFs aqui<br>
-          <small>Quadro Comparativo de Notas / Faltas — um ou vários</small>
+          <small>Quadro Comparativo de Notas / Faltas &mdash; um ou v&aacute;rios</small>
         </p>
         <p class="file-name" id="fileName"></p>
       </div>
 
       <hr class="sep">
 
-      <!-- Campo professor (opcional) -->
       <p style="font-size:.85rem;font-weight:600;color:var(--blue-dark);margin-bottom:.5rem;">
         Professor(a) <span style="font-weight:400;color:var(--muted)">(opcional)</span>
       </p>
@@ -299,72 +375,35 @@
         onfocus="this.style.borderColor='var(--blue-light)'"
         onblur="this.style.borderColor='var(--border)'">
 
-      <hr class="sep">
-
-      <!-- Bimestre selector -->
-      <p style="font-size:.85rem;font-weight:600;color:var(--blue-dark);margin-bottom:.6rem;">
-        Selecione o período:
-      </p>
-      <div class="bimester-grid">
-        {% for value, label in bimester_choices %}
-        <div class="bimester-opt">
-          <input type="radio" name="bimester" id="bim_{{ value }}" value="{{ value }}"
-            {% if selected_bimester == value or not selected_bimester and value == '1' %}checked{% endif %}>
-          <label for="bim_{{ value }}">{{ label }}</label>
-        </div>
-        {% endfor %}
-      </div>
-
-      <hr class="sep">
-
-      <!-- Formato de saída -->
-      <p style="font-size:.85rem;font-weight:600;color:var(--blue-dark);margin-bottom:.6rem;">
-        Formato de saída:
-      </p>
-      <div class="bimester-grid">
-        <div class="bimester-opt">
-          <input type="radio" name="output_format" id="fmt_html" value="html" checked>
-          <label for="fmt_html">
-            Formulário HTML
-            <span style="display:block;font-size:.72rem;font-weight:400;opacity:.8">Visualiza e imprime pelo navegador</span>
-          </label>
-        </div>
-        <div class="bimester-opt">
-          <input type="radio" name="output_format" id="fmt_pdf" value="pdf">
-          <label for="fmt_pdf">
-            PDF direto
-            <span style="display:block;font-size:.72rem;font-weight:400;opacity:.8">Download automático</span>
-          </label>
-        </div>
-      </div>
+      <input type="hidden" name="bimester" value="auto">
+      <input type="hidden" name="output_format" value="html">
 
       <hr class="sep">
 
       <button type="submit" class="btn-generate" id="submitBtn">
         <div class="spinner" id="spinner"></div>
-        <span id="btnText">Enviar Relatório</span>
+        <span id="btnText">Enviar Relat&oacute;rio</span>
       </button>
     </form>
   </div>
 
-  <!-- Legenda de níveis -->
   <div class="card" style="margin-top:1.2rem;">
-    <div class="card-title">🧠 Critérios de Classificação</div>
+    <div class="card-title">&#129504; Crit&eacute;rios de Classifica&ccedil;&atilde;o</div>
     <div class="criteria-grid">
       <div class="criterion green">
-        <strong>🟢 Avançado</strong>
+        <strong>&#128994; Avan&ccedil;ado</strong>
         Nota de 8,0 a 10
       </div>
       <div class="criterion yellow">
-        <strong>🟡 Adequado</strong>
+        <strong>&#128993; Adequado</strong>
         Nota de 6,0 a 7,9
       </div>
       <div class="criterion orange">
-        <strong>🟠 Básico</strong>
+        <strong>&#128992; B&aacute;sico</strong>
         Nota de 4,0 a 5,9
       </div>
       <div class="criterion red">
-        <strong>🔴 Crítico</strong>
+        <strong>&#128308; Cr&iacute;tico</strong>
         Nota de 0 a 3,9
       </div>
     </div>
@@ -372,7 +411,15 @@
 
 </main>
 
-<footer>MAPA — Monitoramento de Aprendizagem Pedagógica Anual</footer>
+<div class="processing-overlay" id="processingOverlay" aria-live="polite">
+  <div class="processing-box">
+    <div class="processing-ring"></div>
+    <strong>Processando relat&oacute;rio</strong>
+    <span>Estou lendo o PDF e montando o MAPA. A tela ser&aacute; atualizada automaticamente quando terminar.</span>
+  </div>
+</div>
+
+<footer>MAPA &mdash; Monitoramento de Aprendizagem Pedag&oacute;gica Anual</footer>
 
 <script>
   const dropZone = document.getElementById('dropZone');
@@ -382,14 +429,15 @@
   const submitBtn = document.getElementById('submitBtn');
   const spinner   = document.getElementById('spinner');
   const btnText   = document.getElementById('btnText');
+  const overlay   = document.getElementById('processingOverlay');
 
   fileInput.addEventListener('change', () => {
     if (fileInput.files.length === 1) {
       fileName.style.display = 'block';
-      fileName.textContent = '✅ ' + fileInput.files[0].name;
+      fileName.textContent = '\u2705 ' + fileInput.files[0].name;
     } else if (fileInput.files.length > 1) {
       fileName.style.display = 'block';
-      fileName.textContent = '✅ ' + fileInput.files.length + ' arquivos selecionados';
+      fileName.textContent = '\u2705 ' + fileInput.files.length + ' arquivos selecionados';
     }
   });
 
@@ -408,24 +456,70 @@
         const n = e.dataTransfer.files.length;
         fileName.style.display = 'block';
         fileName.textContent = n === 1
-          ? '✅ ' + e.dataTransfer.files[0].name
-          : '✅ ' + n + ' arquivos selecionados';
+          ? '\u2705 ' + e.dataTransfer.files[0].name
+          : '\u2705 ' + n + ' arquivos selecionados';
       }
     })
   );
 
-  form.addEventListener('submit', () => {
+  function resetSubmit() {
+    submitBtn.disabled = false;
+    spinner.style.display = 'none';
+    overlay.style.display = 'none';
+    btnText.textContent = 'Enviar Relatório';
+  }
+
+  function filenameFromDisposition(header, fallback) {
+    const match = /filename="?([^"]+)"?/i.exec(header || '');
+    return match ? match[1] : fallback;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
     submitBtn.disabled = true;
     spinner.style.display = 'block';
-    btnText.textContent = 'Processando…';
-    // Re-habilita após 15s (caso o servidor retorne PDF inline)
-    setTimeout(() => {
-      submitBtn.disabled = false;
-      spinner.style.display = 'none';
-      btnText.textContent = 'Enviar Relatório';
-    }, 15000);
-  });
-</script>
+    overlay.style.display = 'grid';
+    btnText.textContent = 'Processando...';
+
+    try {
+      const response = await fetch(form.action || window.location.href, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      });
+
+      const contentType = response.headers.get('content-type') || '';
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || 'Não foi possível gerar o relatório.');
+      }
+
+      if (contentType.includes('application/pdf') || contentType.includes('application/zip')) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filenameFromDisposition(
+          response.headers.get('content-disposition'),
+          contentType.includes('zip') ? 'MAPA_relatorios.zip' : 'MAPA_relatorio.pdf'
+        );
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        resetSubmit();
+        return;
+      }
+
+      const html = await response.text();
+      document.open();
+      document.write(html);
+      document.close();
+    } catch (err) {
+      alert((err && err.message) ? err.message : 'Erro ao gerar relatório.');
+      resetSubmit();
+    }
+  });</script>
 
 </body>
 </html>

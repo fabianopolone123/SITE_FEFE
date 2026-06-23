@@ -6,16 +6,21 @@ import tempfile
 import threading
 import uuid as _uuid_mod
 from datetime import datetime
+from html import escape
 from pathlib import Path
 
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.db import transaction
+from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponse, JsonResponse
+from django.utils import timezone
 
 from .parser import parse_pdf
 from .calculator import calculate
 from .pdf_generator import generate_pdf
+from .models import ProcessedReport, StudentGrade, StudentSnapshot, SubjectSnapshot
 
 BIMESTER_CHOICES = [
+    ('auto', 'Detectar automaticamente'),
     ('1', '1º Bimestre'),
     ('2', '2º Bimestre'),
     ('3', '3º Bimestre'),
@@ -43,79 +48,175 @@ def _get_subj(code, subject_averages):
     return '-'
 
 
-def _get_evolution(pdf_file, bimester: str, current_data: dict) -> dict | None:
+def _json_safe(obj):
+    return json.loads(json.dumps(obj, ensure_ascii=False, default=str))
+
+
+def _level_parts(level):
+    if not level:
+        return '', ''
+    return level.get('key', ''), level.get('label', '')
+
+
+@transaction.atomic
+def _save_processed_report(data, metrics, teacher_name='', source_filename=''):
+    lookup = {
+        'source_filename': source_filename,
+        'school': data['school'],
+        'class_name': data['class_name'],
+        'year': data['year'],
+        'bimester': data['bimester'],
+    }
+    existing = list(ProcessedReport.objects.filter(**lookup).order_by('-processed_at', '-id'))
+    report = existing[0] if existing else ProcessedReport(**lookup)
+
+    if len(existing) > 1:
+        ProcessedReport.objects.filter(id__in=[item.id for item in existing[1:]]).delete()
+
+    report.teacher_name = teacher_name
+    report.bimester_label = data['bimester_label']
+    report.total_students = metrics['total_students']
+    report.class_average = metrics['class_average']
+    report.freq_media = metrics.get('freq_media')
+    report.risk_count = metrics['risk_count']
+    report.risk_pct = metrics['risk_pct']
+    report.learning_index = metrics['learning_index']
+    report.raw_data = _json_safe(data)
+    report.metrics_snapshot = _json_safe(metrics)
+    if report.pk:
+        report.processed_at = timezone.now()
+    report.save()
+
+    report.subjects.all().delete()
+    report.students.all().delete()
+
+    SubjectSnapshot.objects.bulk_create([
+        SubjectSnapshot(
+            report=report,
+            code=subject['code'],
+            name=subject['name'],
+            average=subject['average'],
+            level_key=_level_parts(subject.get('level'))[0],
+            level_label=_level_parts(subject.get('level'))[1],
+        )
+        for subject in metrics['subject_averages']
+    ])
+
+    student_objs = []
+    source_students = []
+    for student in metrics['students']:
+        level_key, level_label = _level_parts(student.get('level'))
+        obj = StudentSnapshot(
+            report=report,
+            num=student.get('num'),
+            name=student['name'],
+            ra=student.get('ra', ''),
+            active=student.get('active', True),
+            total_faltas=student.get('total_faltas'),
+            average=student.get('average'),
+            level_key=level_key,
+            level_label=level_label,
+        )
+        student_objs.append(obj)
+        source_students.append(student)
+
+    StudentSnapshot.objects.bulk_create(student_objs)
+
+    grade_objs = []
+    subjects = data['subjects']
+    subject_names = {s['code']: s['name'] for s in metrics['subject_averages']}
+    for obj, student in zip(student_objs, source_students):
+        for idx, code in enumerate(subjects):
+            grades = student.get('grades') or []
+            grade = grades[idx] if idx < len(grades) else None
+            grade_objs.append(StudentGrade(
+                student=obj,
+                subject_code=code,
+                subject_name=subject_names.get(code, code),
+                grade=grade,
+            ))
+
+    StudentGrade.objects.bulk_create(grade_objs)
+    return report
+
+
+def _get_evolution(bimester: str, current_data: dict, current_metrics: dict | None = None) -> dict | None:
     """
-    Lê o bimestre anterior do mesmo PDF e calcula evolução por aluno.
-    Retorna dict com cres/estab/queda/variacao/dominant, ou None se indisponível.
+    Compara o bimestre atual com o 1º bimestre salvo no banco.
+    Usa somente a média geral da turma como parâmetro.
     """
     if bimester not in ('2', '3', '4'):
         return None
 
-    prev_bim = str(int(bimester) - 1)
-    try:
-        pdf_file.seek(0)
-        prev_data = parse_pdf(pdf_file, prev_bim)
-    except Exception:
-        return None
-
-    prev_avg_by_ra = {}
-    for s in prev_data['students']:
-        valid = [g for g in s['grades'] if g is not None]
-        if valid:
-            prev_avg_by_ra[s['ra']] = round(sum(valid) / len(valid), 1)
-
-    cres = estab = queda = total = 0
-    curr_avgs = []
-    prev_avgs_matched = []
-
-    for s in current_data['students']:
-        valid = [g for g in s['grades'] if g is not None]
-        if not valid:
-            continue
-        curr_avg = round(sum(valid) / len(valid), 1)
-        curr_avgs.append(curr_avg)
-        prev_avg = prev_avg_by_ra.get(s['ra'])
-        if prev_avg is None:
-            continue
-        prev_avgs_matched.append(prev_avg)
-        diff = round(curr_avg - prev_avg, 1)
-        total += 1
-        if diff >= 0.5:
-            cres += 1
-        elif diff <= -0.5:
-            queda += 1
-        else:
-            estab += 1
-
-    if total == 0:
-        return None
-
-    cres_pct  = round(cres  / total * 100, 1)
-    estab_pct = round(estab / total * 100, 1)
-    queda_pct = round(queda / total * 100, 1)
-
-    curr_mean = round(sum(curr_avgs) / len(curr_avgs), 1) if curr_avgs else None
-    prev_mean = round(sum(prev_avgs_matched) / len(prev_avgs_matched), 1) if prev_avgs_matched else None
-
-    if curr_mean is not None and prev_mean is not None:
-        diff_mean = round(curr_mean - prev_mean, 1)
-        variacao_str = ('+' if diff_mean > 0 else '') + _fmt(diff_mean)
-    else:
-        variacao_str = '-'
-
-    dominant = (
-        'cres'  if cres  >= estab and cres  >= queda else
-        'queda' if queda >= estab else
-        'estab'
+    base_report = (
+        ProcessedReport.objects
+        .prefetch_related('students')
+        .filter(
+            school=current_data['school'],
+            class_name=current_data['class_name'],
+            year=current_data['year'],
+            bimester='1',
+        )
+        .order_by('-processed_at', '-id')
+        .first()
     )
+    if not base_report:
+        return None
+
+    curr_mean = None
+    if current_metrics and current_metrics.get('class_average') is not None:
+        curr_mean = float(current_metrics['class_average'])
+    prev_mean = float(base_report.class_average) if base_report.class_average is not None else None
+
+    if curr_mean is None or prev_mean is None:
+        return None
+
+    diff_mean = round(curr_mean - prev_mean, 1)
+    variacao_str = ('+' if diff_mean > 0 else '') + _fmt(diff_mean)
+    if diff_mean >= 0.5:
+        dominant = 'cres'
+    elif diff_mean <= -0.5:
+        dominant = 'queda'
+    else:
+        dominant = 'estab'
 
     return {
-        'cres':     _fmt(cres_pct),
-        'estab':    _fmt(estab_pct),
-        'queda':    _fmt(queda_pct),
+        'cres':     '100' if dominant == 'cres' else '-',
+        'estab':    '100' if dominant == 'estab' else '-',
+        'queda':    '100' if dominant == 'queda' else '-',
         'variacao': variacao_str,
         'dominant': dominant,
     }
+
+
+def _rewind_pdf(pdf_file):
+    try:
+        pdf_file.seek(0)
+    except (AttributeError, OSError):
+        pass
+
+
+def _parse_pdf_period(pdf_file, bimester):
+    _rewind_pdf(pdf_file)
+    return parse_pdf(pdf_file, bimester)
+
+
+def _collect_periods_to_save(pdf_file, selected_bimester, active_data):
+    if selected_bimester not in ('auto', '', None):
+        return [active_data]
+
+    periods = {}
+    for period in ('1', '2', '3', '4'):
+        try:
+            data = _parse_pdf_period(pdf_file, period)
+            periods[data['bimester']] = data
+        except ValueError:
+            continue
+
+    if active_data['bimester'] not in periods:
+        periods[active_data['bimester']] = active_data
+
+    return [periods[key] for key in sorted(periods.keys())]
 
 
 def _build_html_report(data, metrics, teacher_name='', evolution=None):
@@ -124,6 +225,12 @@ def _build_html_report(data, metrics, teacher_name='', evolution=None):
     Retorna o HTML completo como string.
     """
     html = HTML_TEMPLATE.read_text(encoding='utf-8')
+    html = re.sub(
+        r'Compara.{1,4}o com o bimestre anterior',
+        'Comparação com o 1º bimestre',
+        html,
+        count=1,
+    )
 
     today = datetime.now()
     lv = metrics['level_distribution']   # [avancado, adequado, basico, critico]
@@ -185,6 +292,63 @@ def _build_html_report(data, metrics, teacher_name='', evolution=None):
         )
 
     # ── Meta sugerida (média atual + 0,5, máx 10) ────────────────────────
+    risk_blocks = []
+    for student in metrics['at_risk']:
+        subject_rows = []
+        for subject in student['critical_subjects']:
+            level = subject.get('level') or {}
+            color = level.get('color', '#e67e22')
+            subject_rows.append(
+                '<div class="obsRiskSubject">'
+                f'<span>{escape(subject["name"])}</span>'
+                f'<b style="color:{color}">{_fmt(subject["grade"])}</b>'
+                '</div>'
+            )
+        risk_blocks.append(
+            '<section class="obsRiskStudent">'
+            f'<h4>{escape(student["name"])}</h4>'
+            '<div class="obsRiskSubjects">'
+            + ''.join(subject_rows) +
+            '</div>'
+            '</section>'
+        )
+
+    if risk_blocks:
+        mid = (len(risk_blocks) + 1) // 2
+        second_list = ''
+        lists_class = 'obsRiskLists'
+        if len(risk_blocks) > 4:
+            first_blocks = ''.join(risk_blocks[:mid])
+            second_blocks = ''.join(risk_blocks[mid:])
+            lists_class += ' twoCols'
+            second_list = '<div class="obsRiskList">' + second_blocks + '</div>'
+        else:
+            first_blocks = ''.join(risk_blocks)
+        obs7_html = (
+            '<div class="obsRisk">'
+            f'<div class="obsRiskTop" style="border-color:{alert_color};background:{alert_bg};color:{alert_fg}">'
+            f'<strong>{alert_status}</strong>'
+            f'<span>{metrics["risk_count"]} aluno(s) com nota abaixo de 6,0</span>'
+            f'<small>{desc}</small>'
+            '</div>'
+            f'<div class="{lists_class}">'
+            '<div class="obsRiskList">'
+            + first_blocks +
+            '</div>'
+            + second_list +
+            '</div>'
+            '</div>'
+        )
+    else:
+        obs7_html = (
+            '<div class="obsRisk obsRiskEmpty">'
+            f'<div class="obsRiskTop" style="border-color:{alert_color};background:{alert_bg};color:{alert_fg}">'
+            '<strong>NORMAL</strong>'
+            '<span>Nenhum aluno com nota abaixo de 6,0</span>'
+            '<small>Manter acompanhamento regular da turma.</small>'
+            '</div></div>'
+        )
+
     if metrics['class_average'] is not None:
         meta_val = _fmt(min(round(metrics['class_average'] + 0.5, 1), 10.0))
     else:
@@ -254,6 +418,7 @@ def _build_html_report(data, metrics, teacher_name='', evolution=None):
 
         # Seção 7 — Alerta pedagógico
         'alerta-note': at_risk_html,
+        'obs7': obs7_html,
     }
 
     # Percentuais para os donuts
@@ -369,10 +534,10 @@ def _build_results_page(results, errors):
         cards_html += (
             '<div class="rcard">'
             '<div class="rinfo">'
-            '<div class="rname">' + r['name'] + '</div>'
-            '<div class="rlabel">' + r['label'] + '</div>'
+            '<div class="rname">' + escape(r['name']) + '</div>'
+            '<div class="rlabel">' + escape(r['label']) + '</div>'
             '</div>'
-            '<button class="btn" onclick="openReport(' + str(i) + ')">Abrir Relatório</button>'
+            '<button class="btn" onclick="openReport(' + str(i) + ')">Abrir ' + escape(r['label']) + '</button>'
             '</div>'
         )
 
@@ -381,18 +546,14 @@ def _build_results_page(results, errors):
         errors_html = (
             '<div class="errors">'
             '<strong>Erros ao processar:</strong><ul>'
-            + ''.join('<li>' + e + '</li>' for e in errors)
+            + ''.join('<li>' + escape(e) + '</li>' for e in errors)
             + '</ul></div>'
         )
-
-    open_all_btn = ''
-    if len(results) > 1:
-        open_all_btn = '<button class="btn btn-all" onclick="openAll()">Abrir Todos (' + str(len(results)) + ')</button>'
 
     reports_json = json.dumps(
         [{'name': r['name'], 'label': r['label'], 'html': r['html']} for r in results],
         ensure_ascii=False
-    )
+    ).replace('</', '<\\/')
 
     return (
         '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">'
@@ -414,15 +575,13 @@ def _build_results_page(results, errors):
         'padding:1rem;margin-bottom:1rem;font-size:.9rem}'
         '</style></head><body>'
         '<div class="header"><h1>MAPA — Relatórios Gerados</h1>'
-        '<p>' + str(len(results)) + ' relatório(s) processado(s) com sucesso</p></div>'
+        '<p>' + str(len(results)) + ' relatório(s) processado(s) com sucesso. Escolha o bimestre para abrir.</p></div>'
         + errors_html
         + cards_html
-        + open_all_btn
         + '<script>var R=' + reports_json + ';'
         'function openReport(i){'
         'var b=new Blob([R[i].html],{type:"text/html;charset=utf-8"});'
         'window.open(URL.createObjectURL(b),"_blank");}'
-        'function openAll(){R.forEach(function(_,i){setTimeout(function(){openReport(i);},i*300);});}'
         '</script></body></html>'
     )
 
@@ -434,7 +593,7 @@ def index(request):
         })
 
     pdf_files  = request.FILES.getlist('pdf_file')
-    bimester   = request.POST.get('bimester', '1')
+    bimester   = request.POST.get('bimester', 'auto')
     teacher    = request.POST.get('teacher', '').strip()
     output_fmt = request.POST.get('output_format', 'html')
 
@@ -459,28 +618,50 @@ def index(request):
 
     for pdf_file in pdf_files:
         try:
-            data      = parse_pdf(pdf_file, bimester)
-            metrics   = calculate(data)
-            evolution = _get_evolution(pdf_file, bimester, data)
+            data      = _parse_pdf_period(pdf_file, bimester)
+            period_data_list = _collect_periods_to_save(pdf_file, bimester, data)
+            metrics_by_period = {}
+            for period_data in period_data_list:
+                metrics_by_period[period_data['bimester']] = calculate(period_data)
+            metrics = metrics_by_period[data['bimester']]
+            saved_reports = {}
+            for period_data in period_data_list:
+                period_metrics = metrics_by_period[period_data['bimester']]
+                saved_reports[period_data['bimester']] = _save_processed_report(
+                    period_data,
+                    period_metrics,
+                    teacher_name=teacher,
+                    source_filename=pdf_file.name,
+                )
+            display_periods = period_data_list if bimester in ('auto', '', None) else [data]
             if output_fmt == 'html':
                 if not HTML_TEMPLATE.exists():
                     raise ValueError('Template HTML não encontrado na pasta do projeto.')
-                html_content = _build_html_report(data, metrics, teacher_name=teacher, evolution=evolution)
-                results.append({
-                    'name':  _clean_turma(data['class_name']),
-                    'label': data['bimester_label'],
-                    'html':  html_content,
-                    'data':  data,
-                    'metrics': metrics,
-                })
+                for period_data in display_periods:
+                    period_metrics = metrics_by_period[period_data['bimester']]
+                    evolution = _get_evolution(period_data['bimester'], period_data, period_metrics)
+                    html_content = _build_html_report(period_data, period_metrics, teacher_name=teacher, evolution=evolution)
+                    saved_report = saved_reports.get(period_data['bimester'])
+                    results.append({
+                        'name':  _clean_turma(period_data['class_name']),
+                        'label': period_data['bimester_label'],
+                        'html':  html_content,
+                        'data':  period_data,
+                        'metrics': period_metrics,
+                        'report_id': saved_report.id if saved_report else None,
+                    })
             else:
-                pdf_bytes = generate_pdf(data, metrics)
-                results.append({
-                    'name':  _clean_turma(data['class_name']),
-                    'label': data['bimester_label'],
-                    'pdf':   pdf_bytes,
-                    'data':  data,
-                })
+                for period_data in display_periods:
+                    period_metrics = metrics_by_period[period_data['bimester']]
+                    saved_report = saved_reports.get(period_data['bimester'])
+                    pdf_bytes = generate_pdf(period_data, period_metrics)
+                    results.append({
+                        'name':  _clean_turma(period_data['class_name']),
+                        'label': period_data['bimester_label'],
+                        'pdf':   pdf_bytes,
+                        'data':  period_data,
+                        'report_id': saved_report.id if saved_report else None,
+                    })
         except ValueError as e:
             errors.append(f'{pdf_file.name}: {e}')
         except Exception as e:
@@ -520,6 +701,78 @@ def index(request):
     resp = HttpResponse(buf.read(), content_type='application/zip')
     resp['Content-Disposition'] = 'attachment; filename="MAPA_relatorios.zip"'
     return resp
+
+
+def history(request):
+    reports = ProcessedReport.objects.all()[:200]
+    return render(request, 'analyzer/history.html', {
+        'reports': reports,
+    })
+
+
+def generate_from_history(request, report_id):
+    report = get_object_or_404(ProcessedReport, id=report_id)
+    html_content = _build_html_report(
+        report.raw_data,
+        report.metrics_snapshot,
+        teacher_name=report.teacher_name,
+        evolution=None,
+    )
+    return HttpResponse(html_content, content_type='text/html; charset=utf-8')
+
+
+def history_details(request, report_id):
+    report = get_object_or_404(
+        ProcessedReport.objects.prefetch_related('subjects', 'students__grades'),
+        id=report_id,
+    )
+    students = []
+    for student in report.students.all():
+        students.append({
+            'name': student.name,
+            'ra': student.ra,
+            'average': _fmt(student.average),
+            'level': student.level_label or '-',
+            'total_faltas': student.total_faltas if student.total_faltas is not None else '-',
+            'grades': [
+                {
+                    'subject_code': grade.subject_code,
+                    'subject_name': grade.subject_name,
+                    'grade': _fmt(grade.grade),
+                }
+                for grade in student.grades.all()
+            ],
+        })
+
+    payload = {
+        'id': report.id,
+        'source_filename': report.source_filename,
+        'teacher_name': report.teacher_name or '-',
+        'school': report.school,
+        'class_name': report.class_name,
+        'year': report.year,
+        'bimester_label': report.bimester_label,
+        'processed_at': report.processed_at.strftime('%d/%m/%Y %H:%M'),
+        'metrics': {
+            'total_students': report.total_students,
+            'class_average': _fmt(report.class_average),
+            'freq_media': _fmt(report.freq_media),
+            'risk_count': report.risk_count,
+            'risk_pct': _fmt(report.risk_pct),
+            'learning_index': _fmt(report.learning_index),
+        },
+        'subjects': [
+            {
+                'code': subject.code,
+                'name': subject.name,
+                'average': _fmt(subject.average),
+                'level': subject.level_label or '-',
+            }
+            for subject in report.subjects.all()
+        ],
+        'students': students,
+    }
+    return JsonResponse(payload, json_dumps_params={'ensure_ascii': False})
 
 
 # Armazena HTMLs temporários para o Chrome headless buscar via HTTP

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hist&oacute;rico MAPA</title>
+  <style>
+    :root {
+      --blue-dark: #1a3a5c;
+      --blue-mid: #2980b9;
+      --bg: #f0f4f8;
+      --white: #fff;
+      --border: #d1d9e0;
+      --text: #2c3e50;
+      --muted: #7f8c8d;
+      --green: #27ae60;
+      --red: #e74c3c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+      color: white;
+      padding: 1.6rem 1.25rem;
+      text-align: center;
+    }
+    header h1 { font-size: 1.6rem; margin-bottom: .35rem; }
+    header p { opacity: .85; font-size: .92rem; }
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 1.4rem 1.25rem 3rem;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 8px;
+      padding: .62rem 1rem;
+      background: var(--blue-dark);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: .86rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn.secondary {
+      background: #fff;
+      color: var(--blue-dark);
+      border: 1px solid var(--border);
+    }
+    .btn.view {
+      background: var(--green);
+    }
+    .actions {
+      display: flex;
+      gap: .45rem;
+      align-items: center;
+    }
+    .summary {
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 600;
+    }
+    .searchPanel {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .75rem .85rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 16px #0001;
+    }
+    .searchIcon {
+      color: var(--blue-dark);
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+    .searchPanel input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      color: var(--text);
+      font-size: .98rem;
+      font-weight: 700;
+      background: transparent;
+    }
+    .searchPanel input::placeholder {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .searchCount {
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .tableWrap {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px #0001;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th {
+      background: #f8fbfe;
+      color: var(--blue-dark);
+      font-size: .76rem;
+      text-transform: uppercase;
+      text-align: left;
+      padding: .75rem .8rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: .75rem .8rem;
+      border-bottom: 1px solid #edf1f5;
+      font-size: .9rem;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .strong { font-weight: 800; color: var(--blue-dark); }
+    .muted { color: var(--muted); font-size: .78rem; margin-top: .15rem; }
+    .metric { font-weight: 800; white-space: nowrap; }
+    .risk { color: var(--red); }
+    .empty {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .empty.filtered {
+      display: none;
+      margin-top: 1rem;
+    }
+    .modalOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 31, 52, .55);
+      padding: 1rem;
+    }
+    .modal {
+      width: min(980px, 100%);
+      max-height: 90vh;
+      background: var(--white);
+      border-radius: 10px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.25);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modalHead {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      background: #f8fbfe;
+    }
+    .modalHead h2 {
+      color: var(--blue-dark);
+      font-size: 1.15rem;
+      margin-bottom: .25rem;
+    }
+    .modalClose {
+      border: 0;
+      background: var(--blue-dark);
+      color: #fff;
+      border-radius: 7px;
+      width: 34px;
+      height: 34px;
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+    .modalBody {
+      overflow: auto;
+      padding: 1rem 1.2rem 1.2rem;
+    }
+    .detailGrid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: .6rem;
+      margin-bottom: 1rem;
+    }
+    .detailCard {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .7rem;
+      background: #fff;
+    }
+    .detailCard span {
+      display: block;
+      color: var(--muted);
+      font-size: .72rem;
+      text-transform: uppercase;
+      font-weight: 800;
+      margin-bottom: .25rem;
+    }
+    .detailCard strong {
+      color: var(--blue-dark);
+      font-size: .98rem;
+    }
+    .detailSection {
+      margin-top: 1rem;
+    }
+    .detailSection h3 {
+      color: var(--blue-dark);
+      font-size: .98rem;
+      margin-bottom: .5rem;
+    }
+    .compactTable {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .compactTable th,
+    .compactTable td {
+      padding: .45rem .55rem;
+      font-size: .8rem;
+      border-bottom: 1px solid #edf1f5;
+      border-right: 1px solid #edf1f5;
+      vertical-align: top;
+    }
+    .compactTable th {
+      background: #f8fbfe;
+      color: var(--blue-dark);
+      text-transform: uppercase;
+      font-size: .7rem;
+    }
+    .gradesList {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem;
+    }
+    .gradePill {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: .18rem .45rem;
+      background: #fff;
+      white-space: nowrap;
+      font-size: .76rem;
+    }
+    .gradePill b {
+      color: var(--blue-dark);
+    }
+    @media (max-width: 760px) {
+      .topbar { align-items: stretch; flex-direction: column; }
+      .searchPanel { align-items: stretch; flex-direction: column; }
+      .searchCount { white-space: normal; }
+      .tableWrap { overflow-x: auto; }
+      table { min-width: 820px; }
+      .detailGrid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Hist&oacute;rico MAPA</h1>
+  <p>Relat&oacute;rios j&aacute; processados e gravados no banco de dados</p>
+</header>
+
+<main>
+  <div class="topbar">
+    <a class="btn secondary" href="/">Voltar</a>
+    <div class="summary">{{ reports|length }} registro(s) listado(s)</div>
+  </div>
+
+  {% if reports %}
+  <div class="searchPanel">
+    <span class="searchIcon">&#128269;</span>
+    <input type="search" id="historySearch" placeholder="Pesquisar por turma, bimestre, professor, escola, data..." autocomplete="off">
+    <span class="searchCount" id="searchCount">{{ reports|length }} encontrado(s)</span>
+  </div>
+
+  <div class="tableWrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Turma</th>
+          <th>Bimestre</th>
+          <th>Professor</th>
+          <th>Alunos</th>
+          <th>M&eacute;dia</th>
+          <th>Risco</th>
+          <th>A&ccedil;&atilde;o</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for report in reports %}
+        <tr class="reportRow" data-search="{{ report.class_name }} {{ report.school }} {{ report.bimester_label }} {{ report.teacher_name|default:'' }} {{ report.source_filename }} {{ report.processed_at|date:'d/m/Y H:i' }} {{ report.total_students }} {{ report.class_average }} {{ report.risk_count }} {{ report.risk_pct }}">
+          <td>
+            <div class="strong">{{ report.processed_at|date:"d/m/Y" }}</div>
+            <div class="muted">{{ report.processed_at|date:"H:i" }}</div>
+          </td>
+          <td>
+            <div class="strong">{{ report.class_name }}</div>
+            <div class="muted">{{ report.school }}</div>
+          </td>
+          <td>{{ report.bimester_label }}</td>
+          <td>{{ report.teacher_name|default:"-" }}</td>
+          <td class="metric">{{ report.total_students }}</td>
+          <td class="metric">{{ report.class_average|default:"-" }}</td>
+          <td class="metric risk">{{ report.risk_count }} ({{ report.risk_pct }}%)</td>
+          <td>
+            <div class="actions">
+              <button class="btn view" type="button" data-detail-url="{% url 'history_details' report.id %}">Ver</button>
+              <a class="btn" href="{% url 'generate_from_history' report.id %}">Gerar</a>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="empty filtered" id="searchEmpty">Nenhum relat&oacute;rio encontrado com essa pesquisa.</div>
+  {% else %}
+  <div class="empty">Nenhum relat&oacute;rio foi gravado ainda.</div>
+  {% endif %}
+</main>
+
+<div class="modalOverlay" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+  <div class="modal">
+    <div class="modalHead">
+      <div>
+        <h2 id="detailTitle">Dados do relat&oacute;rio</h2>
+        <div class="muted" id="detailSubtitle">Carregando...</div>
+      </div>
+      <button class="modalClose" type="button" id="closeModal" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="modalBody" id="detailBody"></div>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById('detailModal');
+  const detailTitle = document.getElementById('detailTitle');
+  const detailSubtitle = document.getElementById('detailSubtitle');
+  const detailBody = document.getElementById('detailBody');
+  const closeModal = document.getElementById('closeModal');
+  const historySearch = document.getElementById('historySearch');
+  const searchCount = document.getElementById('searchCount');
+  const searchEmpty = document.getElementById('searchEmpty');
+  const reportRows = Array.from(document.querySelectorAll('.reportRow'));
+
+  function normalizeSearch(value) {
+    return String(value ?? '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[ºª]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function applyHistorySearch() {
+    if (!historySearch) return;
+    const terms = normalizeSearch(historySearch.value).split(' ').filter(Boolean);
+    let visible = 0;
+
+    reportRows.forEach(row => {
+      const haystack = row.dataset.searchNormalized || (
+        row.dataset.searchNormalized = normalizeSearch(row.dataset.search)
+      );
+      const match = terms.every(term => haystack.includes(term));
+      row.style.display = match ? '' : 'none';
+      if (match) visible += 1;
+    });
+
+    if (searchCount) searchCount.textContent = visible + ' encontrado(s)';
+    if (searchEmpty) searchEmpty.style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  function esc(value) {
+    return String(value ?? '').replace(/[&<>"']/g, ch => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[ch]));
+  }
+
+  function metricCard(label, value) {
+    return `<div class="detailCard"><span>${label}</span><strong>${esc(value)}</strong></div>`;
+  }
+
+  function renderDetails(data) {
+    detailTitle.textContent = `${data.class_name} - ${data.bimester_label}`;
+    detailSubtitle.textContent = `${data.school} | ${data.processed_at} | Professor(a): ${data.teacher_name}`;
+
+    const metrics = data.metrics;
+    const subjects = data.subjects.map(subject => `
+      <tr>
+        <td>${esc(subject.code)}</td>
+        <td>${esc(subject.name)}</td>
+        <td><strong>${esc(subject.average)}</strong></td>
+        <td>${esc(subject.level)}</td>
+      </tr>
+    `).join('');
+
+    const students = data.students.map(student => {
+      const grades = student.grades.map(grade => `
+        <span class="gradePill">${esc(grade.subject_code)} <b>${esc(grade.grade)}</b></span>
+      `).join('');
+      return `
+        <tr>
+          <td><strong>${esc(student.name)}</strong><div class="muted">RA ${esc(student.ra || '-')}</div></td>
+          <td>${esc(student.average)}</td>
+          <td>${esc(student.level)}</td>
+          <td>${esc(student.total_faltas)}</td>
+          <td><div class="gradesList">${grades}</div></td>
+        </tr>
+      `;
+    }).join('');
+
+    detailBody.innerHTML = `
+      <div class="detailGrid">
+        ${metricCard('Alunos', metrics.total_students)}
+        ${metricCard('Média', metrics.class_average)}
+        ${metricCard('Frequência', metrics.freq_media + '%')}
+        ${metricCard('Risco', metrics.risk_count + ' (' + metrics.risk_pct + '%)')}
+        ${metricCard('IAT', metrics.learning_index + '%')}
+        ${metricCard('Arquivo', data.source_filename || '-')}
+      </div>
+
+      <div class="detailSection">
+        <h3>Médias por disciplina</h3>
+        <table class="compactTable">
+          <thead><tr><th>Cód.</th><th>Disciplina</th><th>Média</th><th>Nível</th></tr></thead>
+          <tbody>${subjects}</tbody>
+        </table>
+      </div>
+
+      <div class="detailSection">
+        <h3>Alunos e notas</h3>
+        <table class="compactTable">
+          <thead><tr><th>Aluno</th><th>Média</th><th>Nível</th><th>Faltas</th><th>Notas</th></tr></thead>
+          <tbody>${students}</tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  async function openDetails(url) {
+    modal.style.display = 'flex';
+    detailTitle.textContent = 'Dados do relatório';
+    detailSubtitle.textContent = 'Carregando...';
+    detailBody.innerHTML = '<div class="empty">Carregando dados...</div>';
+    try {
+      const response = await fetch(url, {headers: {'X-Requested-With': 'XMLHttpRequest'}});
+      if (!response.ok) throw new Error('Não foi possível carregar os dados.');
+      renderDetails(await response.json());
+    } catch (err) {
+      detailBody.innerHTML = `<div class="empty">${esc(err.message || 'Erro ao carregar os dados.')}</div>`;
+    }
+  }
+
+  document.querySelectorAll('[data-detail-url]').forEach(button => {
+    button.addEventListener('click', () => openDetails(button.dataset.detailUrl));
+  });
+
+  if (historySearch) {
+    historySearch.addEventListener('input', applyHistorySearch);
+  }
+
+  closeModal.addEventListener('click', () => { modal.style.display = 'none'; });
+  modal.addEventListener('click', event => {
+    if (event.target === modal) modal.style.display = 'none';
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') modal.style.display = 'none';
+  });
+</script>
+</body>
+</html>

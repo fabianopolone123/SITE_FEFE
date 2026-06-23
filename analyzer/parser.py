@@ -64,6 +64,8 @@ def _extract_grades(line: str, prefix: str):
     Retorna (grades, total_faltas).
     """
     data = line[len(prefix):].strip()
+    if data.startswith('*'):
+        data = data[1:].strip()
     tokens = data.split()
     grades = []
     i = 0
@@ -154,7 +156,34 @@ def _build_prefix(bimester: str, year: str) -> str:
     return f'{year} - Ano Letivo'
 
 
-def parse_pdf(file_object, bimester: str = '1') -> dict:
+def _detect_bimester(all_text: str) -> str:
+    """
+    Detecta o bimestre ativo no PDF.
+    O sistema escolar marca o período selecionado com asterisco, ex: "2º Bimestre*".
+    Se não houver asterisco, usa o último bimestre com notas lançadas.
+    """
+    fallback = None
+    for raw_line in all_text.split('\n'):
+        line = raw_line.strip()
+        marker = re.match(r'^([1-4])\D*Bimestre\s*\*', line, re.IGNORECASE)
+        if marker:
+            return marker.group(1)
+
+        period = re.match(r'^([1-4])\D*Bimestre\s*\*?\s+(.+)$', line, re.IGNORECASE)
+        if not period:
+            continue
+
+        tokens = period.group(2).split()
+        grade_tokens = tokens[:-1:2]
+        if any(_parse_float(token) is not None for token in grade_tokens):
+            fallback = period.group(1)
+
+    if fallback:
+        return fallback
+    raise ValueError('Não foi possível detectar automaticamente o bimestre do PDF.')
+
+
+def parse_pdf(file_object, bimester: str = 'auto') -> dict:
     """
     Lê o PDF de Quadro Comparativo de Notas e retorna um dict com:
       - school: nome da escola
@@ -186,6 +215,8 @@ def parse_pdf(file_object, bimester: str = '1') -> dict:
         )
 
     school, class_name, year = _extract_meta(all_text)
+    if bimester in ('auto', '', None):
+        bimester = _detect_bimester(all_text)
     subjects = _extract_subjects(all_text)
     prefix = _build_prefix(bimester, year)
     total_aulas = _extract_total_aulas(all_text)
