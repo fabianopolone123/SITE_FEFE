@@ -73,6 +73,11 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 20 * 1024 * 1024
 # Caminho do Chrome/Chromium para exportação de PDF (opcional — detecta automaticamente se vazio)
 CHROME_PATH = os.environ.get('CHROME_PATH', '')
 
+# Subpath de deploy (ex: /mapa quando servido em dominio.com.br/mapa)
+_script_name = os.environ.get('SCRIPT_NAME', '').rstrip('/')
+if _script_name:
+    FORCE_SCRIPT_NAME = _script_name
+
 # ── Segurança para produção ───────────────────────────────────────────────────
 if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
