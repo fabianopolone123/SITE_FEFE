@@ -60,6 +60,34 @@
       font-size: .95rem;
       opacity: .8;
     }
+    .user-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: .75rem;
+      padding: .5rem 1.5rem;
+      background: rgba(0,0,0,.18);
+      font-size: .85rem;
+    }
+    .user-bar span {
+      opacity: .85;
+    }
+    .btn-logout {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .3rem .85rem;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 20px;
+      color: white;
+      font-size: .8rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,.25); }
 
     /* â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     main {
@@ -329,6 +357,15 @@
 <body>
 
 <header>
+  {% if user.is_authenticated %}
+  <div class="user-bar">
+    <span>&#128100; {{ user.get_full_name|default:user.username }}</span>
+    <form method="post" action="{% url 'logout' %}" style="margin:0">
+      {% csrf_token %}
+      <button type="submit" class="btn-logout">&#10132; Sair</button>
+    </form>
+  </div>
+  {% endif %}
   <div class="badge">Sistema Escolar Adventista</div>
   <h1>MAPA</h1>
   <p>Monitoramento e Acompanhamento Pedag&oacute;gico da Aprendizagem</p>
