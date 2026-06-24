@@ -14,6 +14,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 from .parser import parse_pdf
 from .calculator import calculate
@@ -616,6 +617,7 @@ def _build_results_page(results, errors, index_url='/'):
     )
 
 
+@login_required
 def index(request):
     if request.method == 'GET':
         return render(request, 'analyzer/index.html', {
@@ -734,6 +736,7 @@ def index(request):
     return resp
 
 
+@login_required
 def history(request):
     reports = ProcessedReport.objects.all()[:200]
     return render(request, 'analyzer/history.html', {
@@ -741,6 +744,7 @@ def history(request):
     })
 
 
+@login_required
 def generate_from_history(request, report_id):
     report = get_object_or_404(ProcessedReport, id=report_id)
     html_content = _build_html_report(
@@ -752,6 +756,7 @@ def generate_from_history(request, report_id):
     return HttpResponse(html_content, content_type='text/html; charset=utf-8')
 
 
+@login_required
 def history_details(request, report_id):
     report = get_object_or_404(
         ProcessedReport.objects.prefetch_related('subjects', 'students__grades'),
@@ -845,6 +850,7 @@ def _strip_extensions_scripts(html: str) -> str:
     )
 
 
+@login_required
 def serve_temp_report(request, report_id):
     """Serve o HTML temporário para o Chrome headless."""
     with _pending_lock:
@@ -854,6 +860,7 @@ def serve_temp_report(request, report_id):
     return HttpResponse(html, content_type='text/html; charset=utf-8')
 
 
+@login_required
 def export_pdf(request):
     """Recebe HTML via POST, serve via localhost e usa Chrome headless para gerar PDF."""
     if request.method != 'POST':
