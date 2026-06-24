@@ -4,198 +4,391 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login — MAPA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --blue-dark:  #1a3a5c;
-      --blue-mid:   #2980b9;
-      --blue-light: #3498db;
-      --bg:         #f0f4f8;
-      --white:      #ffffff;
-      --border:     #d1d9e0;
-      --text:       #2c3e50;
-      --muted:      #7f8c8d;
-      --red:        #e74c3c;
-      --radius:     10px;
-      --shadow:     0 4px 20px rgba(0,0,0,.10);
+      --navy: #0e2841;
+      --navy-deep: #071a33;
+      --teal: #156082;
+      --cyan: #19c2d3;
+      --soft-teal: #e7f7f8;
+      --white: #ffffff;
+      --text: #16314d;
+      --muted: #5f748b;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: var(--bg);
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Nunito', sans-serif;
       color: var(--text);
+      overflow: hidden;
+    }
+
+    .login-layout {
+      min-height: 100vh;
+      position: relative;
+      background:
+        radial-gradient(circle at top left, rgba(25,194,211,.14), transparent 20%),
+        linear-gradient(135deg, #fcfdfd 0%, #f2f6f8 55%, #eef4f7 100%);
+      overflow: hidden;
+    }
+
+    .login-layout::before {
+      content: '';
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 72%;
+      background:
+        radial-gradient(circle at 20% 90%, rgba(25,194,211,.12), transparent 20%),
+        repeating-radial-gradient(circle at 66% 6%, rgba(14,40,65,.045) 0 1px, transparent 1px 14px);
+      opacity: .45;
+    }
+
+    .login-layout::after {
+      position: absolute;
+      content: '';
+      top: -8%;
+      right: -12%;
+      width: 46%;
+      height: 122%;
+      background: linear-gradient(180deg, #071a33 0%, #0e2841 46%, #0c5d75 100%);
+      clip-path: polygon(42% 0, 100% 0, 100% 100%, 8% 100%);
+    }
+
+    .login-stage,
+    .login-brand,
+    .login-hero,
+    .login-card {
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-stage {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      padding: 2.5rem 2.75rem;
     }
 
-    header {
-      background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
-      color: white;
-      padding: 2rem 1.5rem 1.8rem;
+    .login-brand {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+    }
+
+    .brand-ribbon {
+      display: grid;
+      justify-items: center;
+      gap: .4rem;
+      color: var(--white);
+      text-align: center;
+      margin-right: 1rem;
+    }
+
+    .brand-ribbon__mark {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 4.5rem;
+      line-height: .9;
+      font-weight: 800;
+    }
+
+    .brand-ribbon__text strong,
+    .brand-ribbon__text span {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .login-hero {
+      display: grid;
+      gap: 2.25rem;
+      width: 100%;
+      max-width: 34rem;
+      justify-items: center;
+    }
+
+    .hero-copy {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.2rem;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .hero-accent {
+      flex: 0 0 .9rem;
+      width: .9rem;
+      height: 7.8rem;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--teal), var(--navy));
+    }
+
+    .hero-copy__text h1 {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(2.3rem, 5vw, 4rem);
+      line-height: 1;
+      letter-spacing: -.05em;
+      color: #13336a;
+    }
+
+    .hero-copy__text p {
+      margin: .2rem 0 0;
+      color: #233e73;
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(.95rem, 1.8vw, 1.25rem);
+      font-weight: 700;
+      line-height: 1.25;
+      text-align: left;
+    }
+
+    .hero-line {
+      display: block;
+      width: min(16rem, 44vw);
+      height: .18rem;
+      margin-top: .9rem;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--cyan), var(--teal));
+    }
+
+    .hero-line::after {
+      content: '';
+      display: block;
+      width: .75rem;
+      height: .75rem;
+      margin-left: auto;
+      margin-top: -.28rem;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .login-grid {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 30rem;
+      padding: 2.2rem 2.2rem 2.3rem;
+      border-radius: 2rem;
+      background: rgba(255,255,255,.96);
+      border: 1px solid rgba(19,51,106,.12);
+      box-shadow: 0 18px 48px rgba(14,40,65,.09);
+    }
+
+    .card-icon {
+      display: grid;
+      place-items: center;
+      width: 4.4rem;
+      height: 4.4rem;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), #17a2b4);
+      color: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      box-shadow: 0 10px 24px rgba(21,96,130,.22);
+    }
+
+    .login-card__header {
+      display: grid;
+      justify-items: center;
+      margin-top: 1rem;
+    }
+
+    .login-badge {
+      display: inline-flex;
+      padding: .45rem .8rem;
+      border-radius: 999px;
+      background: var(--soft-teal);
+      color: var(--teal);
+      font-size: .85rem;
+      font-weight: 700;
+    }
+
+    .login-card__header h2 {
+      margin: .75rem 0 0;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.3rem;
+      color: var(--navy);
       text-align: center;
     }
 
-    header .badge {
-      display: inline-block;
-      background: rgba(255,255,255,.15);
-      border: 1px solid rgba(255,255,255,.25);
-      border-radius: 20px;
-      font-size: .75rem;
-      letter-spacing: .06em;
-      padding: .25rem .9rem;
-      margin-bottom: .9rem;
-      text-transform: uppercase;
-    }
-
-    header h1 {
-      font-size: 1.9rem;
-      font-weight: 700;
-      letter-spacing: -.01em;
-      line-height: 1.2;
-    }
-
-    header p {
-      margin-top: .5rem;
-      font-size: .95rem;
-      opacity: .8;
-    }
-
-    main {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1.25rem;
-    }
-
-    .card {
-      background: var(--white);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 2.5rem 2rem;
-      width: 100%;
-      max-width: 400px;
-    }
-
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--blue-dark);
-      margin-bottom: .35rem;
-    }
-
-    .card-sub {
-      font-size: .875rem;
+    .login-card__header p {
+      margin: .75rem auto 0;
+      max-width: 22rem;
       color: var(--muted);
-      margin-bottom: 1.75rem;
+      text-align: center;
     }
 
-    .form-alert {
-      background: #fdecea;
-      border: 1px solid #f5c6cb;
-      border-radius: 6px;
-      color: var(--red);
-      font-size: .875rem;
-      padding: .75rem 1rem;
-      margin-bottom: 1.25rem;
+    .login-form {
+      display: grid;
+      gap: 1.1rem;
+      margin-top: 1.9rem;
     }
 
     .form-field {
-      margin-bottom: 1.1rem;
+      display: grid;
+      gap: .45rem;
     }
 
     .form-field label {
-      display: block;
-      font-size: .875rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: .4rem;
+      font-weight: 700;
+      color: var(--navy);
     }
 
     .form-control {
       width: 100%;
-      padding: .6rem .85rem;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: .95rem;
-      font-family: inherit;
+      padding: .95rem 1rem;
+      border: 1px solid rgba(21,96,130,.16);
+      border-radius: 1rem;
+      background: #fbfdfe;
       color: var(--text);
-      transition: border-color .15s;
-      outline: none;
+      font: inherit;
+      transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
     }
 
     .form-control:focus {
-      border-color: var(--blue-light);
-      box-shadow: 0 0 0 3px rgba(52,152,219,.15);
+      outline: none;
+      border-color: rgba(25,194,211,.75);
+      box-shadow: 0 0 0 4px rgba(25,194,211,.14);
+      transform: translateY(-1px);
+    }
+
+    .primary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 3.25rem;
+      padding: .9rem 1.25rem;
+      margin-top: .6rem;
+      border: 0;
+      border-radius: 1rem;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--teal), var(--cyan));
+      color: var(--white);
+      box-shadow: 0 18px 28px rgba(21,96,130,.28);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .primary-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .form-alert {
+      padding: .9rem 1rem;
+      border-radius: 1rem;
+      background: rgba(255,237,213,.92);
+      color: #b42318;
+      font-size: .95rem;
     }
 
     .field-error {
-      display: block;
-      font-size: .8rem;
-      color: var(--red);
-      margin-top: .3rem;
+      color: #b42318;
+      font-size: .85rem;
     }
 
-    .btn-login {
-      width: 100%;
-      padding: .75rem;
-      background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      margin-top: .5rem;
-      transition: opacity .15s;
+    @media (max-width: 1080px) {
+      .login-layout::after { width: 54%; }
+      .login-stage { padding: 2rem 1.5rem; }
     }
 
-    .btn-login:hover { opacity: .9; }
+    @media (max-width: 640px) {
+      .login-stage { padding: 1.25rem; }
+      .login-card { border-radius: 1.25rem; max-width: none; }
+      .login-layout::after {
+        width: 100%; height: 32%;
+        top: auto; bottom: 0; right: 0;
+        clip-path: polygon(100% 0, 100% 100%, 0 100%);
+      }
+      .hero-accent { height: 5.8rem; flex-basis: .7rem; width: .7rem; }
+      .hero-copy { gap: .9rem; }
+    }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="badge">Educação Adventista</div>
-  <h1>MAPA</h1>
-  <p>Monitoramento e Acompanhamento Pedagógico da Aprendizagem</p>
-</header>
+<main class="login-layout">
+  <div class="login-stage">
 
-<main>
-  <div class="card">
-    <p class="card-title">Entrar no sistema</p>
-    <p class="card-sub">Use seu usuário e senha para acessar.</p>
-
-    <form method="post">
-      {% csrf_token %}
-
-      {% if form.non_field_errors %}
-        <div class="form-alert">
-          {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+    <aside class="login-brand">
+      <div class="brand-ribbon">
+        <div class="brand-ribbon__mark">A</div>
+        <div class="brand-ribbon__text">
+          <strong>Educação</strong>
+          <span>Adventista</span>
         </div>
-      {% endif %}
+      </div>
+    </aside>
 
-      <div class="form-field">
-        <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
-        {{ form.username }}
-        {% if form.username.errors %}
-          <small class="field-error">{{ form.username.errors|join:', ' }}</small>
-        {% endif %}
+    <section class="login-hero">
+      <div class="hero-copy">
+        <span class="hero-accent"></span>
+        <div class="hero-copy__text">
+          <h1>MAPA</h1>
+          <p>Monitoramento e Acompanhamento<br>Pedagógico da Aprendizagem</p>
+          <span class="hero-line"></span>
+        </div>
       </div>
 
-      <div class="form-field">
-        <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
-        {{ form.password }}
-        {% if form.password.errors %}
-          <small class="field-error">{{ form.password.errors|join:', ' }}</small>
-        {% endif %}
-      </div>
+      <div class="login-grid">
+        <section class="login-card">
+          <div class="card-icon" aria-hidden="true"><span>AC</span></div>
 
-      <button type="submit" class="btn-login">Entrar no painel</button>
-    </form>
+          <div class="login-card__header">
+            <span class="login-badge">Login</span>
+            <h2>Entrar</h2>
+            <p>Use seu usuário e senha para acessar o painel.</p>
+          </div>
+
+          <form method="post" class="login-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="form-alert">
+                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+              </div>
+            {% endif %}
+
+            <div class="form-field">
+              <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+              {{ form.username }}
+              {% if form.username.errors %}
+                <small class="field-error">{{ form.username.errors|join:', ' }}</small>
+              {% endif %}
+            </div>
+
+            <div class="form-field">
+              <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+              {{ form.password }}
+              {% if form.password.errors %}
+                <small class="field-error">{{ form.password.errors|join:', ' }}</small>
+              {% endif %}
+            </div>
+
+            <button type="submit" class="primary-button">Entrar no painel</button>
+          </form>
+        </section>
+      </div>
+    </section>
+
   </div>
 </main>
 
